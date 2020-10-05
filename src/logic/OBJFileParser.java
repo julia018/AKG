@@ -39,7 +39,8 @@ public class OBJFileParser {
             processString(positions, normals, uvs, faces, line);
         }
         System.out.println(faces.size());
-        return null;
+        Geometry result = new Geometry(faces);
+        return result;
     }
 
     private static void processString(List<Vector3> positions, List<Vector3> normals, List<Vector2> uvs, List<Triangle> faces, String line) {
