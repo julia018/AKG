@@ -81,4 +81,7 @@ public class Transformation {
         return this.multiply(mat);
     }
 
+    public void setMatrixElement(int i, double value) {
+        this.matrix[i] = value;
+    }
 }
