@@ -10,4 +10,9 @@ public class Geometry {
 
         this.triangleList = triangleList;
     }
+
+
+    public List<Triangle> getTriangleList() {
+        return triangleList;
+    }
 }

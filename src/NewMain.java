@@ -1,6 +1,16 @@
+import logic.Camera;
+import logic.OBJFileParser;
+import logic.Transformation;
+import model.Geometry;
+import model.Triangle;
+import model.Vector3;
+import model.Vertex;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 
 
 public class NewMain extends JPanel implements MouseWheelListener, MouseListener, MouseMotionListener {
@@ -11,13 +21,13 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
     public int startpointY, endpointY;
 
     public NewMain() {
-        setPreferredSize(new Dimension(870, 675));
+        setPreferredSize(new Dimension(870, 650));
         addMouseWheelListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         NewMain newMain = new NewMain();
@@ -30,8 +40,32 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
         frame.addMouseListener(newMain);
         frame.addMouseMotionListener(newMain);
 
+        Camera camera = new Camera();
+        camera.setViewport(870, 650, 0, -100);
+        camera.setOrthoProjection(870, 650, 0, -100);
+        camera.setObserver(new Vector3(0, 0, 10), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+        Geometry geometry = OBJFileParser.parseOBJFile(new File("res/sphere.obj"));
+         for(Triangle triangle: geometry.getTriangleList()) {
+             Vertex v1 = triangle.getVertexByIndex(0);
+             System.out.println(v1);
 
-        Bresenhime.drawBresenhamLine(2, 2, 1000, 1000, frame.getGraphics());
+             Vertex v2 = triangle.getVertexByIndex(1);
+             System.out.println(v2);
+             Vertex v3 = triangle.getVertexByIndex(2);
+             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver()).multiplyByMatrix(new Transformation());
+             System.out.println(res1);
+             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
+             System.out.println(vector1);
+
+             Vector3 vector2 = res1.multiplyByVector(v2.getPosition());
+             System.out.println(vector2);
+             Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
+             System.out.println(vector3);
+             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
+             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), frame.getGraphics());
+             Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
+         }
+
     }
 
 

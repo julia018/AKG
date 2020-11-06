@@ -11,4 +11,14 @@ public class Vertex {
         this.normal = normal;
         this.uv = uv;
     }
+
+    public Vector3 getPosition() {
+        return position;
+    }
+
+    public String toString() {
+        String res = " ";
+        res += position.getX() + " " + position.getY() + " " + position.getZ();
+        return res;
+    }
 }

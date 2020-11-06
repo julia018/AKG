@@ -93,4 +93,12 @@ public class Transformation {
         }
         return res;
     }
+
+    public String toString() {
+        String res = "";
+        for(int i = 0; i < matrix.length; i++) {
+            res += " " + matrix[i];
+        }
+        return res;
+    }
 }

@@ -62,4 +62,10 @@ public class Vector3 {
     public void setVectorElement(int i, float value) {
         this.vector4[i] = value;
     }
+
+    public String toString() {
+        String res = " ";
+        res += vector4[0] + " " + vector4[1] + " " + vector4[2];
+        return res;
+    }
 }

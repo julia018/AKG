@@ -75,7 +75,7 @@ public class OBJFileParser {
                 Vector2 uv = uvs.get(Integer.parseInt(faceMatcher.group(i + 1)) - 1);
                 Vector3 normal = normals.get(Integer.parseInt(faceMatcher.group(i + 2)) - 1);
                 vertices.add(new Vertex(position, normal, uv));
-                System.out.println("Vertex ");
+                System.out.println("Vertex " + position.getX() + " " );
             }
             faces.add(new Triangle(vertices));
         }
