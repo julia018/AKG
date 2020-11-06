@@ -80,6 +80,9 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
 
         System.out.println("Rotate X to :" + deltaX);
         System.out.println("Rotate Y to :" + deltaY);
+
+        startpointX = endpointX;
+        startpointY = endpointY;
     }
 
     @Override
