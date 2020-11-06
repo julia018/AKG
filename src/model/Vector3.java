@@ -5,12 +5,14 @@ public class Vector3 {
     private float x;
     private float y;
     private float z;
+    private float[] vector4;
 
 
     public Vector3(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.vector4 = new float[]{x, y, z, 1};
     }
 
     public Vector3 getNormalized() {
@@ -47,5 +49,17 @@ public class Vector3 {
 
     public float getZ() {
         return z;
+    }
+
+    public float[] getVector4() {
+        return vector4;
+    }
+
+    public float getVectorElement(int i) {
+        return this.vector4[i];
+    }
+
+    public void setVectorElement(int i, float value) {
+        this.vector4[i] = value;
     }
 }

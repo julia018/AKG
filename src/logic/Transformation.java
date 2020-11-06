@@ -1,6 +1,6 @@
 package logic;
 
-import java.lang.reflect.Array;
+import model.Vector3;
 
 public class Transformation {
 
@@ -10,18 +10,15 @@ public class Transformation {
         this.matrix = new double[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
     }
 
-
-
-    // multiply this matrix to parameter
-    public Transformation multiply(Transformation matrix2) {
+    public Transformation multiplyByMatrix(Transformation matrix2) {
         Transformation res = new Transformation();
         for (int row = 0; row < 4; ++row) {
             for (int col = 0; col < 4; ++col) {
                 int sum = 0;
                 for (int k = 0; k < 4; ++k) {
-                    sum += this.matrix[k * 4 + row] * matrix2.matrix[col * 4 + k];
+                    sum += this.matrix[row * 4 + k] * matrix2.matrix[k * 4 + col];
                 }
-                res.matrix[col * 4 + row] = sum;
+                res.matrix[row * 4 + col] = sum;
             }
         }
         return res;
@@ -33,7 +30,7 @@ public class Transformation {
         mat.matrix[12] = x;
         mat.matrix[13] = y;
         mat.matrix[14] = z;
-        return this.multiply(mat);
+        return this.multiplyByMatrix(mat);
     }
 
     //scaling
@@ -42,7 +39,7 @@ public class Transformation {
         mat.matrix[0] = x;
         mat.matrix[5] = y;
         mat.matrix[10] = z;
-        return this.multiply(mat);
+        return this.multiplyByMatrix(mat);
     }
 
     // rotation matrix around X axis
@@ -54,7 +51,7 @@ public class Transformation {
         mat.matrix[10] = c;
         mat.matrix[9] = -s;
         mat.matrix[6] = s;
-        return this.multiply(mat);
+        return this.multiplyByMatrix(mat);
     }
 
     // rotation matrix around Y axis
@@ -66,7 +63,7 @@ public class Transformation {
         mat.matrix[10] = c;
         mat.matrix[2] = -s;
         mat.matrix[8] = s;
-        return this.multiply(mat);
+        return this.multiplyByMatrix(mat);
     }
 
     // rotation matrix around Z axis
@@ -78,10 +75,22 @@ public class Transformation {
         mat.matrix[5] = c;
         mat.matrix[4] = -s;
         mat.matrix[1] = s;
-        return this.multiply(mat);
+        return this.multiplyByMatrix(mat);
     }
 
     public void setMatrixElement(int i, double value) {
         this.matrix[i] = value;
+    }
+
+    public Vector3 multiplyByVector(Vector3 vector) {
+        Vector3 res = new Vector3(0, 0, 0);
+        for (int row = 0; row < 4; ++row) {
+            float sum = 0;
+            for (int col = 0; col < 4; ++col) {
+                sum += this.matrix[row * 4 + col] * vector.getVectorElement(col);
+            }
+            res.setVectorElement(row, sum);
+        }
+        return res;
     }
 }
