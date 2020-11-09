@@ -19,6 +19,9 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
 
     public int startpointX, endpointX;
     public int startpointY, endpointY;
+    private static Geometry g;
+    private static Camera cam;
+    private static Transformation res1;
 
     public NewMain() {
         setPreferredSize(new Dimension(870, 650));
@@ -41,31 +44,38 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
         frame.addMouseMotionListener(newMain);
 
         Camera camera = new Camera();
-        camera.setViewport(870, 650, 0, -100);
-        camera.setOrthoProjection(870, 650, 0, -100);
-        camera.setObserver(new Vector3(0, 0, 10), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+        camera.setViewport(870, 650, 0, -1000);
+        camera.setOrthoProjection(870, 650, 0, -1000);
+        camera.setObserver(new Vector3(0, 0, 20), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+        cam = camera;
         Geometry geometry = OBJFileParser.parseOBJFile(new File("res/sphere.obj"));
-         for(Triangle triangle: geometry.getTriangleList()) {
-             Vertex v1 = triangle.getVertexByIndex(0);
-             System.out.println(v1);
+        g = geometry;
+        res1 = cam.getViewport().multiplyByMatrix(cam.getProjection()).multiplyByMatrix(cam.getObserver());
+         drawImage();
+    }
 
-             Vertex v2 = triangle.getVertexByIndex(1);
-             System.out.println(v2);
-             Vertex v3 = triangle.getVertexByIndex(2);
-             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver()).multiplyByMatrix(new Transformation());
-             System.out.println(res1);
-             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
-             System.out.println(vector1);
+    public static void drawImage() {
+        for(Triangle triangle: g.getTriangleList()) {
+            Vertex v1 = triangle.getVertexByIndex(0);
+            System.out.println(v1);
 
-             Vector3 vector2 = res1.multiplyByVector(v2.getPosition());
-             System.out.println(vector2);
-             Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
-             System.out.println(vector3);
-             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
-             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), frame.getGraphics());
-             Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
-         }
+            Vertex v2 = triangle.getVertexByIndex(1);
+            System.out.println(v2);
+            Vertex v3 = triangle.getVertexByIndex(2);
+            Transformation res = res1.multiplyByMatrix(new Transformation().scale(50, 50, 50));
+            //System.out.println(res1);
+            Vector3 vector1 = res.multiplyByVector(v1.getPosition());
+            System.out.println(vector1);
 
+            Vector3 vector2 = res.multiplyByVector(v2.getPosition());
+            System.out.println(vector2);
+            Vector3 vector3 = res.multiplyByVector(v3.getPosition());
+            System.out.println(vector3);
+            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
+            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), frame.getGraphics());
+            Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
+
+        }
     }
 
 
@@ -100,6 +110,7 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
     public void mousePressed(MouseEvent e) {
         startpointX = e.getX();
         startpointY = e.getY();
+
     }
 
 
@@ -117,6 +128,9 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
 
         startpointX = endpointX;
         startpointY = endpointY;
+
+        frame.getGraphics().clearRect(0, 0, 870, 650);
+        drawImage();
     }
 
     @Override
