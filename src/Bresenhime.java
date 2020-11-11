@@ -7,7 +7,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(int xstart, int ystart, int xend, int yend, Graphics g)
+    public static void drawBresenhamLine(int xstart, int ystart, int xend, int yend, Display d)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -16,7 +16,7 @@ public class Bresenhime {
      */
     {
         int x, y, dx, dy, incx, incy, pdx, pdy, es, el, err;
-        g.setColor(Color.BLACK);
+        //g.setColor(Color.BLACK);
         dx = xend - xstart;//проекция на ось икс
         dy = yend - ystart;//проекция на ось игрек
 
@@ -60,7 +60,7 @@ public class Bresenhime {
         x = xstart;
         y = ystart;
         err = el / 2;
-        g.drawLine(x, y, x, y);//ставим первую точку
+        d.drawPixel(x, y);//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
         for (int t = 0; t < el; t++)//идём по всем точкам, начиная со второй и до последней
@@ -75,7 +75,7 @@ public class Bresenhime {
                 y += pdy;//цикл идёт по иксу; сдвинуть вверх или вниз, если по y
             }
 
-            g.drawLine(x, y, x, y);
+            d.drawPixel(x, y);
         }
     }
 }

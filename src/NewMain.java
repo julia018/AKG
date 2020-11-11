@@ -14,24 +14,29 @@ import java.io.IOException;
 
 
 public class NewMain extends JPanel implements MouseWheelListener, MouseListener, MouseMotionListener {
-    public static JFrame frame = new JFrame("3D");
-
+    //public static JFrame frame = new JFrame("3D");
+    private Display display;
 
     public int startpointX, endpointX;
     public int startpointY, endpointY;
     private static Geometry g;
+    private static Display d;
     private static Camera cam;
     private static Transformation res1;
 
     public NewMain() {
-        setPreferredSize(new Dimension(870, 650));
+        //setPreferredSize(new Dimension(870, 650));
         addMouseWheelListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
     }
 
     public static void main(String[] args) throws IOException {
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        d = new Display(800, 600, "Software Rendering");
+        //System.out.println("Hello everyone! It's Benny!");
+
+
+        /*frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         NewMain newMain = new NewMain();
         JComponent newContentPane = newMain;
@@ -42,38 +47,47 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
         frame.addMouseWheelListener(newMain);
         frame.addMouseListener(newMain);
         frame.addMouseMotionListener(newMain);
+*/
 
         Camera camera = new Camera();
-        camera.setViewport(870, 650, 0, -1000);
-        camera.setOrthoProjection(870, 650, 0, -1000);
+        camera.setViewport(800, 600, 0, -1000);
+        camera.setOrthoProjection(800, 600, 0, -1000);
         camera.setObserver(new Vector3(0, 0, 20), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
         cam = camera;
-        Geometry geometry = OBJFileParser.parseOBJFile(new File("res/sphere.obj"));
+        Geometry geometry = OBJFileParser.parseOBJFile(new File("res/Model.obj"));
         g = geometry;
         res1 = cam.getViewport().multiplyByMatrix(cam.getProjection()).multiplyByMatrix(cam.getObserver());
-         drawImage();
+         //drawImage();
+         int x = 0;
+         while(true) {
+             d.clearScreen();
+             drawImage(x);
+             d.SwapBuffers();
+             x++;
+         }
+
     }
 
-    public static void drawImage() {
+    public static void drawImage(int x) {
         for(Triangle triangle: g.getTriangleList()) {
             Vertex v1 = triangle.getVertexByIndex(0);
-            System.out.println(v1);
+            //System.out.println(v1);
 
             Vertex v2 = triangle.getVertexByIndex(1);
-            System.out.println(v2);
+            //System.out.println(v2);
             Vertex v3 = triangle.getVertexByIndex(2);
-            Transformation res = res1.multiplyByMatrix(new Transformation().scale(50, 50, 50));
+            Transformation res = res1.multiplyByMatrix(new Transformation().scale(x, x, x));
             //System.out.println(res1);
             Vector3 vector1 = res.multiplyByVector(v1.getPosition());
-            System.out.println(vector1);
+            //System.out.println(vector1);
 
             Vector3 vector2 = res.multiplyByVector(v2.getPosition());
-            System.out.println(vector2);
+            //System.out.println(vector2);
             Vector3 vector3 = res.multiplyByVector(v3.getPosition());
-            System.out.println(vector3);
-            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
-            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), frame.getGraphics());
-            Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), frame.getGraphics());
+            //System.out.println(vector3);
+            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), d);
+            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), d);
+            Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), d);
 
         }
     }
@@ -129,8 +143,8 @@ public class NewMain extends JPanel implements MouseWheelListener, MouseListener
         startpointX = endpointX;
         startpointY = endpointY;
 
-        frame.getGraphics().clearRect(0, 0, 870, 650);
-        drawImage();
+        //display.getM_frame().getGraphics().clearRect(0, 0, 870, 650);
+        //drawImage();
     }
 
     @Override
