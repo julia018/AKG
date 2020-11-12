@@ -21,4 +21,8 @@ public class Triangle {
     public Vertex getVertexByIndex(int index) {
         return this.vertices.get(index);
     }
+
+    public void setVertexByIndex(int index, Vertex vertex) {
+        this.vertices.set(index, vertex);
+    }
 }

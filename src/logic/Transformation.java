@@ -5,9 +5,11 @@ import model.Vector3;
 public class Transformation {
 
     private double[] matrix;
+    private double scale = 0;
 
     public Transformation() {
         this.matrix = new double[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+        this.scale = 1;
     }
 
     public Transformation multiplyByMatrix(Transformation matrix2) {
@@ -34,11 +36,12 @@ public class Transformation {
     }
 
     //scaling
-    public Transformation scale(double x, double y, double z) {
+    public Transformation scale(double x) {
+        this.scale += x;
         Transformation mat = new Transformation();
         mat.matrix[0] = x;
-        mat.matrix[5] = y;
-        mat.matrix[10] = z;
+        mat.matrix[5] = x;
+        mat.matrix[10] = x;
         return this.multiplyByMatrix(mat);
     }
 
@@ -61,8 +64,8 @@ public class Transformation {
         Transformation mat = new Transformation();
         mat.matrix[0] = c;
         mat.matrix[10] = c;
-        mat.matrix[2] = -s;
-        mat.matrix[8] = s;
+        mat.matrix[2] = s;
+        mat.matrix[8] = -s;
         return this.multiplyByMatrix(mat);
     }
 
@@ -100,5 +103,9 @@ public class Transformation {
             res += " " + matrix[i];
         }
         return res;
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
     }
 }

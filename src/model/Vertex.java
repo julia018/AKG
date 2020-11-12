@@ -21,4 +21,8 @@ public class Vertex {
         res += position.getX() + " " + position.getY() + " " + position.getZ();
         return res;
     }
+
+    public void setPosition(Vector3 position) {
+        this.position = position;
+    }
 }
