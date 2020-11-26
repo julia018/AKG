@@ -30,16 +30,21 @@ public class NewMain extends JPanel{
 
     public static void main(String[] args) throws IOException {
 
+        Camera camera = new Camera(new Vector3(0, 0, 5), new Vector3(0, 0, 0), new Vector3(0, 1,0));
+        camera.setPerspProjectionFOV(45, 700/600, 0.2, 15.0);
+        camera.setViewport(700, 600);
+        //camera.setOrthoProjection(800, 600, 0, -1000);
+        //camera.setPerspProjection(800.0, 600.0, 20.0, 1000.0);
 
-        Camera camera = new Camera();
-        camera.setViewport(800, 600, 0, -1000);
-        camera.setOrthoProjection(800, 600, 0, -1000);
-        camera.setObserver(new Vector3(0, 0, 20), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+        //camera.setObserver(new Vector3(0, 0, 5), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+
         cam = camera;
         Geometry geometry = OBJFileParser.parseOBJFile(new File("res/Model.obj"));
         g = geometry;
-        res1 = cam.getViewport().multiplyByMatrix(cam.getProjection()).multiplyByMatrix(cam.getObserver());
-        d = new Display(800, 600, "Software Rendering", camera, res1, geometry);
+        Transformation res = cam.getProjection().multiplyByMatrix(cam.getObserver());
+        Transformation obs = cam.getObserver();
+        res1 = cam.getViewport().multiplyByMatrix(res);
+        d = new Display(700, 600, "Software Rendering", camera, res1, geometry);
 
     }
 

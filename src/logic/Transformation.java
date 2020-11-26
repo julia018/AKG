@@ -5,18 +5,16 @@ import model.Vector3;
 public class Transformation {
 
     private double[] matrix;
-    private double scale = 0;
 
     public Transformation() {
         this.matrix = new double[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-        this.scale = 1;
     }
 
     public Transformation multiplyByMatrix(Transformation matrix2) {
         Transformation res = new Transformation();
         for (int row = 0; row < 4; ++row) {
             for (int col = 0; col < 4; ++col) {
-                int sum = 0;
+                double sum = 0;
                 for (int k = 0; k < 4; ++k) {
                     sum += this.matrix[row * 4 + k] * matrix2.matrix[k * 4 + col];
                 }
@@ -37,7 +35,6 @@ public class Transformation {
 
     //scaling
     public Transformation scale(double x) {
-        this.scale += x;
         Transformation mat = new Transformation();
         mat.matrix[0] = x;
         mat.matrix[5] = x;
@@ -81,15 +78,25 @@ public class Transformation {
         return this.multiplyByMatrix(mat);
     }
 
+    public Transformation transpose() {
+        Transformation res = new Transformation();
+        for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 4; j++) {
+                res.setMatrixElement(i * 4 + j, this.matrix[j * 4 + i]);
+            }
+        }
+        return res;
+    }
+
     public void setMatrixElement(int i, double value) {
         this.matrix[i] = value;
     }
 
     public Vector3 multiplyByVector(Vector3 vector) {
         Vector3 res = new Vector3(0, 0, 0);
-        for (int row = 0; row < 4; ++row) {
+        for (int row = 0; row < 4; row++) {
             float sum = 0;
-            for (int col = 0; col < 4; ++col) {
+            for (int col = 0; col < 4; col++) {
                 sum += this.matrix[row * 4 + col] * vector.getVectorElement(col);
             }
             res.setVectorElement(row, sum);
@@ -103,9 +110,5 @@ public class Transformation {
             res += " " + matrix[i];
         }
         return res;
-    }
-
-    public void setScale(int scale) {
-        this.scale = scale;
     }
 }

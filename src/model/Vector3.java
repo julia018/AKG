@@ -63,6 +63,23 @@ public class Vector3 {
         this.vector4[i] = value;
     }
 
+    public void divideByW() {
+        this.setVectorElement(0, this.vector4[0] / this.vector4[3]);
+        this.setVectorElement(1, this.vector4[1] / this.vector4[3]);
+        this.setVectorElement(2, this.vector4[2] / this.vector4[3]);
+    }
+
+    public void addValueToVectorElement(int index, double value) {
+        this.vector4[index] += value;
+        if(index == 0) {
+            this.x += value;
+        } else if(index == 1) {
+            this.y += value;
+        } else if(index == 2) {
+            this.z += value;
+        }
+    }
+
     public String toString() {
         String res = " ";
         res += vector4[0] + " " + vector4[1] + " " + vector4[2];

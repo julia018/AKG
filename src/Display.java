@@ -12,9 +12,9 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
-public class Display extends Canvas implements MouseWheelListener, MouseListener, MouseMotionListener
+public class Display extends Canvas implements MouseWheelListener, MouseListener, MouseMotionListener, KeyListener
 {
-    private final double TARGET_Z = 20.0;
+    private final double TARGET_Z = 102.0;
 
     /** The window being used for display */
     private final JFrame m_frame;
@@ -40,7 +40,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     private double xAngle;
     private double yAngle;
 
-    private int scale;
+    private double scale;
 
     public int startpointX, endpointX;
     public int startpointY, endpointY;
@@ -92,11 +92,11 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
         this.xAngle = 0;
         this.yAngle = 0;
-        this.scale = 250;
+        this.scale = 1;
 
         this.camera = camera;
-        this.constMatrix = constMatrix;
-        this.transformMatrix = new Transformation().scale(this.scale);
+        this.constMatrix = this.camera.getViewport().multiplyByMatrix(camera.getProjection());
+        this.transformMatrix = (new Transformation());
         this.geometry = geometry;
 
 
@@ -104,35 +104,56 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         addMouseWheelListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
+        addKeyListener(this);
         drawImage();
     }
 
     public void drawPixel(int x, int y) {
         try {
+            //System.out.println("X" + x);
+            //System.out.println("Y" + y);
             m_frameBuffer.DrawPixel(x, y, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xF0);
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Index out of bounds!!!!!!!");
+            //System.out.println("Index out of bounds!!!!!!!");
         }
     }
 
     private void drawImage() {
         clearScreen();
+        System.out.println("target");
+        System.out.println(camera.getTarget());
          for(Triangle triangle: geometry.getTriangleList()) {
             Vertex v1 = triangle.getVertexByIndex(0);
             //System.out.println(v1);
+            //Transformation tr = camera.getTransformation();
 
             Vertex v2 = triangle.getVertexByIndex(1);
             //System.out.println(v2);
             Vertex v3 = triangle.getVertexByIndex(2);
-            Transformation res = this.constMatrix.multiplyByMatrix(this.transformMatrix);
+            //Transformation temp = this.transformMatrix.multiplyByMatrix(camera.getObserver().transpose()).multiplyByMatrix(camera.getProjection().transpose());
+            //Transformation res = this.constMatrix.multiplyByMatrix(this.transformMatrix);
             //System.out.println(res1);
-            Vector3 vector1 = res.multiplyByVector(v1.getPosition());
+             //res = temp;
+
+             Transformation res1 = this.constMatrix.multiplyByMatrix(camera.getObserver()).multiplyByMatrix((new Transformation()).rotateY(yAngle).rotateX(xAngle).scale(scale));
+                //Transformation t = camera.getViewport();
+           /* Vector3 vector1 = t.multiplyByVector(res.multiplyByVector(v1.getPosition()));
             //System.out.println(vector1);
 
-            Vector3 vector2 = res.multiplyByVector(v2.getPosition());
+            Vector3 vector2 = t.multiplyByVector(res.multiplyByVector(v2.getPosition()));
             //System.out.println(vector2);
-            Vector3 vector3 = res.multiplyByVector(v3.getPosition());
-            //System.out.println(vector3);
+            Vector3 vector3 = t.multiplyByVector(res.multiplyByVector(v3.getPosition()));
+            //System.out.println(vector3);*/
+             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
+             //System.out.println("W" + vector1.getVectorElement(3));
+             vector1.divideByW();
+
+             Vector3 vector2 = res1.multiplyByVector(v2.getPosition());
+             vector2.divideByW();
+             //System.out.println(vector2);
+             Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
+             vector3.divideByW();
+             //System.out.println(vector3);
             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this);
             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), this);
             Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this);
@@ -167,11 +188,14 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         // positive value means rotate down
         if (e.getWheelRotation() < 0) {
             System.out.println("Rotated Up... " + e.getWheelRotation());
+            this.scale *= (Math.abs(e.getWheelRotation()) * 1.2) ;
+
         } else {
             System.out.println("Rotated Down... " + e.getWheelRotation());
+            this.scale /= (Math.abs(e.getWheelRotation()) * 1.2);
         }
 
-
+        //this.transformMatrix = (new Transformation().scale(this.scale)).rotateY(this.yAngle).rotateX(this.xAngle);
 
         // Get scrolled unit amount
         System.out.println("ScrollAmount: " + e.getScrollAmount());
@@ -183,8 +207,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         // such as the page-up or page-down key.
         if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
             System.out.println("MouseWheelEvent.WHEEL_UNIT_SCROLL");
-            this.scale += e.getUnitsToScroll() * 5;
-            this.transformMatrix = (new Transformation().scale(this.scale)).rotateY(this.yAngle).rotateX(this.xAngle);
+
 
             drawImage();
         }
@@ -226,10 +249,6 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         this.yAngle += yAngle;
         this.xAngle += -xAngle;
 
-        //this.transformMatrix = this.transformMatrix.rotateX(yAngle);
-        this.transformMatrix = (new Transformation().scale(this.scale)).rotateY(this.yAngle).rotateX(this.xAngle);
-
-
         drawImage();
     }
 
@@ -257,5 +276,47 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println(e);
+        int keyCode = e.getKeyCode();
+        switch (keyCode) {
+            case 81: // "Q"
+                System.out.println("Q");
+                camera.addEyeZ(-0.1);
+                break;
+            case 69: // "E"
+                System.out.println("E");
+                camera.addEyeZ(0.1);
+                break;
+            case 87: // "W"
+                System.out.println("W");
+                camera.addEyeY(0.1);
+                break;
+            case 83: // "S"
+                System.out.println("S");
+                camera.addEyeY(-0.1);
+                break;
+            case 65: // "A"
+                System.out.println("A");
+                camera.addEyeX(-0.1);
+                break;
+            case 68: // "D"
+                System.out.println("D");
+                camera.addEyeX(0.1);
+                break;
+        }
+        drawImage();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }
