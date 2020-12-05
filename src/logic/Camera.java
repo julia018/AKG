@@ -13,6 +13,10 @@ public class Camera {
     private Vector3 target;
     private Vector3 up;
 
+    private float modelX;
+    private float modelY;
+    private float modelZ;
+
 
     private final double XMIN = 0.0;
     private final double YMIN = 0.0;
@@ -21,6 +25,9 @@ public class Camera {
         this.eye = eye;
         this.target = target;
         this.up = up;
+        this.modelX = target.getX();
+        this.modelY = target.getY();
+        this.modelZ = target.getZ();
     }
 
 
@@ -63,29 +70,9 @@ public class Camera {
         this.viewport.setMatrixElement(7,  YMIN + height / 2.0);
     }
 
-    /*public void setObserver(Vector3 eye, Vector3 target, Vector3 up) {
-        this.observer = new Transformation();
-
-        Vector3 zAxis = eye.substractVector(target).getNormalized();
-        Vector3 xAxis = up.getCrossProduct(zAxis).getNormalized();
-        Vector3 yAxis = up;
-        this.observer.setMatrixElement(0, xAxis.getX());
-        this.observer.setMatrixElement(1,  xAxis.getY());
-        this.observer.setMatrixElement(2, xAxis.getZ());
-        this.observer.setMatrixElement(3,  -1 * xAxis.getScalarProduct(eye));
-        this.observer.setMatrixElement(4, yAxis.getX());
-        this.observer.setMatrixElement(5,  yAxis.getY());
-        this.observer.setMatrixElement(6, yAxis.getZ());
-        this.observer.setMatrixElement(7,  -1 * yAxis.getScalarProduct(eye));
-        this.observer.setMatrixElement(8, zAxis.getX());
-        this.observer.setMatrixElement(9,  zAxis.getY());
-        this.observer.setMatrixElement(10, zAxis.getZ());
-        this.observer.setMatrixElement(11,  -1 * zAxis.getScalarProduct(eye));
-
-    }*/
 
     public Transformation getTransformation() {
-        return transformation;
+        return new Transformation().translate(this.modelX, this.modelY, this.modelZ);
     }
 
     public Transformation getProjection() {
@@ -100,7 +87,11 @@ public class Camera {
     public Transformation getObserver() {
         Transformation observer = new Transformation();
         System.out.println("in observer ");
+        System.out.println("eye");
         System.out.println(eye);
+        System.out.println("in observer ");
+        System.out.println("target");
+        System.out.println(target);
         Vector3 zAxis = eye.substractVector(target).getNormalized();
         Vector3 xAxis = up.getCrossProduct(zAxis).getNormalized();
         Vector3 yAxis = up;
@@ -135,5 +126,24 @@ public class Camera {
 
     public Vector3 getTarget() {
         return target;
+    }
+
+    public double getTargetZ() {
+        return this.eye.getZ() - this.target.getZ();
+    }
+
+    public void addModelX(float value) {
+        this.modelX += value;
+        this.target.setVectorElement(0, this.modelX);
+    }
+
+    public void addModelY(double value) {
+        this.modelY += value;
+        this.target.setVectorElement(1, this.modelY);
+    }
+
+    public void addModelZ(double value) {
+        this.modelZ += value;
+        this.target.setVectorElement(2, this.modelZ);
     }
 }

@@ -3,6 +3,7 @@ package model;
 public class Vertex {
 
     private Vector3 position;
+    private Vector3 newPosition; // position after all stuff for projection
     private Vector3 normal;
     private Vector2 uv; // for texture
 
@@ -24,5 +25,13 @@ public class Vertex {
 
     public void setPosition(Vector3 position) {
         this.position = position;
+    }
+
+    public Vector3 getNewPosition() {
+        return newPosition;
+    }
+
+    public void setNewPosition(Vector3 newPosition) {
+        this.newPosition = newPosition;
     }
 }

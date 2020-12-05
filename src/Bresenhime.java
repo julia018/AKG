@@ -7,7 +7,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(int xstart, int ystart, int xend, int yend, Display d)
+    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, byte a, byte b, byte g, byte r, float[] zBuffer)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -15,10 +15,20 @@ public class Bresenhime {
      * Можно писать что-нибудь вроде g.fillRect (x, y, 1, 1);
      */
     {
-        int x, y, dx, dy, incx, incy, pdx, pdy, es, el, err;
+        int x, y, dx, dy, incx, incy, incz, pdx, pdy, es, el, err;
+        float dz, zStep;
         //g.setColor(Color.BLACK);
         dx = xend - xstart;//проекция на ось икс
         dy = yend - ystart;//проекция на ось игрек
+        dz = zEnd - zStart;
+
+        if(dz <= 0) {
+            incz = -1;
+        } else {
+            incz = 1;
+        }
+
+        dz = Math.abs(dz);
 
         incx = sign(dx);
         /*
@@ -49,18 +59,20 @@ public class Bresenhime {
             pdy = 0;
             es = dy;
             el = dx;
+            zStep = Math.abs(dz / dx);
         } else//случай, когда прямая скорее "высокая", чем длинная, т.е. вытянута по оси y
         {
             pdx = 0;
             pdy = incy;
             es = dx;
             el = dy;//тогда в цикле будем двигаться по y
+            zStep = Math.abs(dz / dy);
         }
 
         x = xstart;
         y = ystart;
         err = el / 2;
-        d.drawPixel(x, y);//ставим первую точку
+        d.drawPixel(x, y, zStart, zBuffer, a, b, g, r);//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
         for (int t = 0; t < el; t++)//идём по всем точкам, начиная со второй и до последней
@@ -75,7 +87,7 @@ public class Bresenhime {
                 y += pdy;//цикл идёт по иксу; сдвинуть вверх или вниз, если по y
             }
 
-            d.drawPixel(x, y);
+            d.drawPixel(x, y, zStart + zStep * incz * (t + 1), zBuffer, a, g, b, r);
         }
     }
 }

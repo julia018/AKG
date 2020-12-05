@@ -1,9 +1,6 @@
 import logic.Camera;
 import logic.Transformation;
-import model.Geometry;
-import model.Triangle;
-import model.Vector3;
-import model.Vertex;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,10 +8,12 @@ import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.List;
+import java.util.Random;
 
 public class Display extends Canvas implements MouseWheelListener, MouseListener, MouseMotionListener, KeyListener
 {
-    private final double TARGET_Z = 102.0;
+    private double targetZ;
 
     /** The window being used for display */
     private final JFrame m_frame;
@@ -24,12 +23,14 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     private final BufferedImage m_displayImage;
     /** The pixels of the display image, as an array of byte components */
     private final byte[]         m_displayComponents;
+    private float[] zBuffer;
     /** The buffers in the Canvas */
     private final BufferStrategy m_bufferStrategy;
     /** A graphics object that can draw into the Canvas's buffers */
     private final Graphics       m_graphics;
 
     private final Camera camera;
+    private final Random r = new Random();
 
     private final Transformation constMatrix;
 
@@ -39,6 +40,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
     private double xAngle;
     private double yAngle;
+
+    private double cameraXAngle;
+    private double cameraYAngle;
 
     private double scale;
 
@@ -92,14 +96,17 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
         this.xAngle = 0;
         this.yAngle = 0;
+        this.cameraXAngle = 0;
+        this.cameraYAngle = 0;
         this.scale = 1;
 
         this.camera = camera;
+        this.targetZ = camera.getTargetZ();
         this.constMatrix = this.camera.getViewport().multiplyByMatrix(camera.getProjection());
         this.transformMatrix = (new Transformation());
         this.geometry = geometry;
 
-
+        this.zBuffer = new float[getWidth() * getHeight()];
 
         addMouseWheelListener(this);
         addMouseListener(this);
@@ -108,11 +115,20 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         drawImage();
     }
 
-    public void drawPixel(int x, int y) {
+    public void drawPixel(int x, int y, float z, float[] zBuffer, byte a, byte b, byte g, byte r) {
         try {
             //System.out.println("X" + x);
             //System.out.println("Y" + y);
-            m_frameBuffer.DrawPixel(x, y, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xF0);
+            int width = getWidth();
+            int height = getHeight();
+            if((x <= width) && (y <= height)) {
+                if((zBuffer[y * width + x] - z) < 0) {
+                    m_frameBuffer.DrawPixel(x, y, a, b, g, r);
+                    zBuffer[y * width + x] = z;
+                } else {
+                    System.out.println("Otbracovka!");
+                }
+            }
         } catch (IndexOutOfBoundsException e) {
             //System.out.println("Index out of bounds!!!!!!!");
         }
@@ -120,8 +136,16 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
     private void drawImage() {
         clearScreen();
+        initZBuffer();
         System.out.println("target");
         System.out.println(camera.getTarget());
+        System.out.println("trans");
+        System.out.println(camera.getTransformation());
+//        byte a = (byte)r.nextInt(256);
+//        byte b = (byte)r.nextInt(256);
+//        byte g = (byte)r.nextInt(256);
+//        byte rr = (byte)r.nextInt(256);
+
          for(Triangle triangle: geometry.getTriangleList()) {
             Vertex v1 = triangle.getVertexByIndex(0);
             //System.out.println(v1);
@@ -134,8 +158,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             //Transformation res = this.constMatrix.multiplyByMatrix(this.transformMatrix);
             //System.out.println(res1);
              //res = temp;
-
-             Transformation res1 = this.constMatrix.multiplyByMatrix(camera.getObserver()).multiplyByMatrix((new Transformation()).rotateY(yAngle).rotateX(xAngle).scale(scale));
+             System.out.println("transf");
+             System.out.println(camera.getTransformation());
+             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
                 //Transformation t = camera.getViewport();
            /* Vector3 vector1 = t.multiplyByVector(res.multiplyByVector(v1.getPosition()));
             //System.out.println(vector1);
@@ -147,19 +172,42 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
              Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
              //System.out.println("W" + vector1.getVectorElement(3));
              vector1.divideByW();
+             v1.setNewPosition(vector1);
 
              Vector3 vector2 = res1.multiplyByVector(v2.getPosition());
              vector2.divideByW();
+             v2.setNewPosition(vector2);
              //System.out.println(vector2);
              Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
              vector3.divideByW();
+             v3.setNewPosition(vector3);
+             triangle.updateSides();
+             drawRasterizedTriangle(triangle.gerScanLines(), new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256), r.nextInt(1)), zBuffer);
              //System.out.println(vector3);
-            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this);
-            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), this);
-            Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this);
+
+             byte a = (byte)(2);
+             byte b = (byte)r.nextInt(256);
+             byte g = (byte)r.nextInt(256);
+             byte rr = (byte)r.nextInt(256);
+           /* Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)),this, a, b, g, rr, zBuffer);
+            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector3.getVectorElement(2), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), this, a, b, g, rr, zBuffer);
+            Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), vector3.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this, a, b, g, rr, zBuffer);
+            */
 
         }
         swapBuffers();
+    }
+
+    private void initZBuffer() {
+        for(int i = 0; i < zBuffer.length; i++) {
+            zBuffer[i] = Integer.MIN_VALUE;
+        }
+    }
+
+    private void drawRasterizedTriangle(List<Side> sides, Color color, float[] zBuffer) {
+        for(Side side: sides) {
+            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), Math.round(side.getzStart()), Math.round(side.getzEnd()), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, (byte) color.getAlpha(), (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed(), zBuffer);
+        }
     }
 
     public void clearScreen() {
@@ -240,10 +288,12 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         startpointX = endpointX;
         startpointY = endpointY;
 
-        double xAngle = Math.atan(deltaY / TARGET_Z);
+        double targetZ = camera.getTargetZ();
+
+        double xAngle = Math.atan(deltaY / targetZ * 0.5);
         System.out.println(xAngle);
 
-        double yAngle = Math.atan(deltaX / TARGET_Z);
+        double yAngle = Math.atan(deltaX / targetZ * 0.5);
         System.out.println(yAngle);
 
         this.yAngle += yAngle;
@@ -311,6 +361,47 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             case 68: // "D"
                 System.out.println("D");
                 camera.addEyeX(0.1);
+                break;
+            // camera rotation
+            case 37: // LEFT arrow
+                System.out.println("LEFT");
+                cameraYAngle -= 0.2;
+                break;
+            case 38: // UP arrow
+                System.out.println("UP");
+                cameraXAngle += 0.2;
+                break;
+            case 39: // RIGHT arrow
+                System.out.println("RIGHT");
+                cameraYAngle += 0.2;
+                break;
+            case 40: // DOWN arrow
+                System.out.println("DOWN");
+                cameraXAngle -= 0.2;
+                break;
+            case 100: // num4
+                System.out.println("num4");
+                camera.addModelX(1);
+                break;
+            case 102: // num6
+                System.out.println("num6");
+                camera.addModelX(-1);
+                break;
+            case 104: // num8
+                System.out.println("num8");
+                camera.addModelY(0.5);
+                break;
+            case 98: // num2
+                System.out.println("num2");
+                camera.addModelY(-0.5);
+                break;
+            case 103: // num7
+                System.out.println("num7");
+                camera.addModelZ(1);
+                break;
+            case 105: // num9
+                System.out.println("num9");
+                camera.addModelZ(-1);
                 break;
         }
         drawImage();

@@ -27,9 +27,9 @@ public class Transformation {
     //translation
     public  Transformation translate(double x, double y, double z) {
         Transformation mat = new Transformation();
-        mat.matrix[12] = x;
-        mat.matrix[13] = y;
-        mat.matrix[14] = z;
+        mat.matrix[3] = x;
+        mat.matrix[7] = y;
+        mat.matrix[11] = z;
         return this.multiplyByMatrix(mat);
     }
 

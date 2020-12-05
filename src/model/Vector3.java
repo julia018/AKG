@@ -61,6 +61,13 @@ public class Vector3 {
 
     public void setVectorElement(int i, float value) {
         this.vector4[i] = value;
+        if(i == 0) {
+            this.x = value;
+        } else if(i == 1) {
+            this.y = value;
+        } else if(i == 2) {
+            this.z = value;
+        }
     }
 
     public void divideByW() {
