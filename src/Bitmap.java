@@ -48,15 +48,16 @@ public class Bitmap
     }
 
     /**
-     * Copies the Bitmap into a BGR byte array.
+     * Copies the Bitmap into a ABGR byte array.
      */
     public void CopyToByteArray(byte[] dest)
     {
         for(int i = 0; i < m_width * m_height; i++)
         {
-            dest[i * 3    ] = m_components[i * 4 + 1];
-            dest[i * 3 + 1] = m_components[i * 4 + 2];
-            dest[i * 3 + 2] = m_components[i * 4 + 3];
+            dest[i * 4   ] = m_components[i * 4];
+            dest[i * 4 + 1] = m_components[i * 4 + 1];
+            dest[i * 4 + 2] = m_components[i * 4 + 2];
+            dest[i * 4 + 3] = m_components[i * 4 + 3];
         }
     }
 }

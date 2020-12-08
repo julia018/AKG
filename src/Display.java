@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -67,7 +68,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
         //Creates images used for display.
         m_frameBuffer = new Bitmap(width, height);
-        m_displayImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+        m_displayImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
         m_displayComponents =
                 ((DataBufferByte)m_displayImage.getRaster().getDataBuffer()).getData();
 
@@ -122,12 +123,12 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             int width = getWidth();
             int height = getHeight();
             if((x <= width) && (y <= height)) {
-                if((zBuffer[y * width + x] - z) < 0) {
+                //if((zBuffer[y * width + x] - z) < 0) {
                     m_frameBuffer.DrawPixel(x, y, a, b, g, r);
                     zBuffer[y * width + x] = z;
-                } else {
-                    System.out.println("Otbracovka!");
-                }
+                //} else {
+                    //System.out.println("Otbracovka!");
+                //}
             }
         } catch (IndexOutOfBoundsException e) {
             //System.out.println("Index out of bounds!!!!!!!");
@@ -141,10 +142,10 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         System.out.println(camera.getTarget());
         System.out.println("trans");
         System.out.println(camera.getTransformation());
-//        byte a = (byte)r.nextInt(256);
-//        byte b = (byte)r.nextInt(256);
-//        byte g = (byte)r.nextInt(256);
-//        byte rr = (byte)r.nextInt(256);
+        /*int a = 150;
+        int b = r.nextInt(256);
+        int g = r.nextInt(256);
+        int rr = r.nextInt(256);*/
 
          for(Triangle triangle: geometry.getTriangleList()) {
             Vertex v1 = triangle.getVertexByIndex(0);
@@ -182,13 +183,17 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
              vector3.divideByW();
              v3.setNewPosition(vector3);
              triangle.updateSides();
-             drawRasterizedTriangle(triangle.gerScanLines(), new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256), r.nextInt(1)), zBuffer);
+             /*int a = 100;
+             int b = r.nextInt(256);
+             int g = r.nextInt(256);
+             int rr = r.nextInt(256);*/
+             int a = 150;
+             int b = 150;
+             int g = 120;
+             int rr = 220;
+             drawRasterizedTriangle(triangle.gerScanLines(), new Color(rr, g, b, a), zBuffer);
              //System.out.println(vector3);
-
-             byte a = (byte)(2);
-             byte b = (byte)r.nextInt(256);
-             byte g = (byte)r.nextInt(256);
-             byte rr = (byte)r.nextInt(256);
+             //swapBuffers();
            /* Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)),this, a, b, g, rr, zBuffer);
             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector3.getVectorElement(2), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), this, a, b, g, rr, zBuffer);
             Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), vector3.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this, a, b, g, rr, zBuffer);
@@ -211,7 +216,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     }
 
     public void clearScreen() {
-        m_frameBuffer.Clear((byte)0x00);
+        m_frameBuffer.Clear((byte)0xFF);
     }
 
     /**

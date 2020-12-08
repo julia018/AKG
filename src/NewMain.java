@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 
 public class NewMain extends JPanel{
@@ -40,6 +41,7 @@ public class NewMain extends JPanel{
 
         cam = camera;
         Geometry geometry = OBJFileParser.parseOBJFile(new File("res/Model.obj"));
+        //Collections.reverse(geometry.getTriangleList());
         g = geometry;
         Transformation res = cam.getProjection().multiplyByMatrix(cam.getObserver());
         //Transformation obs = cam.getObserver();
