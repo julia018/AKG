@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +16,8 @@ import java.util.Random;
 public class Display extends Canvas implements MouseWheelListener, MouseListener, MouseMotionListener, KeyListener
 {
     private double targetZ;
+
+    private int brack = 0;
 
     /** The window being used for display */
     private final JFrame m_frame;
@@ -31,13 +34,13 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     private final Graphics       m_graphics;
 
     private final Camera camera;
-    private final Random r = new Random();
-
-    private final Transformation constMatrix;
+    private final int a = 255;
+    private final int b = 150;
+    private final int g = 120;
+    private final int rr = 220;
+    private final Color color = new Color(rr, g, b, a);
 
     private Geometry geometry;
-
-    private Transformation transformMatrix;
 
     private double xAngle;
     private double yAngle;
@@ -57,7 +60,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
      * @param height How tall the display is, in pixels.
      * @param title  The text displayed in the window's title bar.
      */
-    public Display(int width, int height, String title, Camera camera, Transformation constMatrix, Geometry geometry)
+    public Display(int width, int height, String title, Camera camera, Geometry geometry)
     {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
@@ -67,16 +70,14 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         setMaximumSize(size);
 
         //Creates images used for display.
-        m_frameBuffer = new Bitmap(width, height);
-        m_displayImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-        m_displayComponents =
-                ((DataBufferByte)m_displayImage.getRaster().getDataBuffer()).getData();
+
 
         //m_frameBuffer.Clear((byte)0x80);
         //m_frameBuffer.DrawPixel(100, 100, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xFF);
 
         //Create a JFrame designed specifically to show this Display.
         m_frame = new JFrame();
+
 
         m_frame.add(this);
         m_frame.pack();
@@ -86,15 +87,20 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         m_frame.setLocationRelativeTo(null);
         m_frame.setTitle(title);
         m_frame.setVisible(true);
-
-
-
+        System.out.println(m_frame.getSize());
         //Allocates 1 display buffer, and gets access to it via the buffer
         //strategy and a graphics object for drawing into it.
         createBufferStrategy(1);
         m_bufferStrategy = getBufferStrategy();
         m_graphics = m_bufferStrategy.getDrawGraphics();
 
+        int m_frame_width = m_frame.getWidth();
+        int m_frame_height = m_frame.getHeight();
+
+        m_frameBuffer = new Bitmap(m_frame_width, m_frame_height);
+        m_displayImage = new BufferedImage(m_frame_width, m_frame_height, BufferedImage.TYPE_4BYTE_ABGR);
+        m_displayComponents =
+                ((DataBufferByte)m_displayImage.getRaster().getDataBuffer()).getData();
         this.xAngle = 0;
         this.yAngle = 0;
         this.cameraXAngle = 0;
@@ -102,12 +108,15 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         this.scale = 1;
 
         this.camera = camera;
+        camera.setPerspProjectionFOV(45, (float)m_frame_width/m_frame_height, 0.2, 25.0);
+        camera.setViewport(m_frame_width, m_frame_height);
         this.targetZ = camera.getTargetZ();
-        this.constMatrix = this.camera.getViewport().multiplyByMatrix(camera.getProjection());
-        this.transformMatrix = (new Transformation());
         this.geometry = geometry;
 
-        this.zBuffer = new float[getWidth() * getHeight()];
+        this.zBuffer = new float[m_frame_width * m_frame_height];
+
+        System.out.println(m_displayComponents.length);
+        System.out.println(m_frame_height * m_frame_width * 4);
 
         addMouseWheelListener(this);
         addMouseListener(this);
@@ -123,12 +132,13 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             int width = getWidth();
             int height = getHeight();
             if((x <= width) && (y <= height)) {
-                //if((zBuffer[y * width + x] - z) < 0) {
+                if((zBuffer[y * width + x] - z) < 0) {
                     m_frameBuffer.DrawPixel(x, y, a, b, g, r);
                     zBuffer[y * width + x] = z;
-                //} else {
-                    //System.out.println("Otbracovka!");
-                //}
+                } else {
+                    brack++;
+                    System.out.println("Otbracovka!");
+                }
             }
         } catch (IndexOutOfBoundsException e) {
             //System.out.println("Index out of bounds!!!!!!!");
@@ -159,8 +169,8 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             //Transformation res = this.constMatrix.multiplyByMatrix(this.transformMatrix);
             //System.out.println(res1);
              //res = temp;
-             System.out.println("transf");
-             System.out.println(camera.getTransformation());
+             //System.out.println("transf");
+             //System.out.println(camera.getTransformation());
              Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
                 //Transformation t = camera.getViewport();
            /* Vector3 vector1 = t.multiplyByVector(res.multiplyByVector(v1.getPosition()));
@@ -187,11 +197,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
              int b = r.nextInt(256);
              int g = r.nextInt(256);
              int rr = r.nextInt(256);*/
-             int a = 150;
-             int b = 150;
-             int g = 120;
-             int rr = 220;
-             drawRasterizedTriangle(triangle.gerScanLines(), new Color(rr, g, b, a), zBuffer);
+
+             drawRasterizedTriangle(triangle.gerScanLines(), color, zBuffer);
+             System.out.println("Bracks = " + brack);
              //System.out.println(vector3);
              //swapBuffers();
            /* Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)),this, a, b, g, rr, zBuffer);
@@ -204,6 +212,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     }
 
     private void initZBuffer() {
+        brack = 0;
         for(int i = 0; i < zBuffer.length; i++) {
             zBuffer[i] = Integer.MIN_VALUE;
         }
@@ -211,12 +220,13 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
     private void drawRasterizedTriangle(List<Side> sides, Color color, float[] zBuffer) {
         for(Side side: sides) {
-            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), Math.round(side.getzStart()), Math.round(side.getzEnd()), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, (byte) color.getAlpha(), (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed(), zBuffer);
+            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, (byte) color.getAlpha(), (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed(), zBuffer);
         }
     }
 
     public void clearScreen() {
         m_frameBuffer.Clear((byte)0xFF);
+        Arrays.fill(m_displayComponents, (byte)0xFF);
     }
 
     /**
@@ -227,9 +237,15 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         //Display components should be the byte array used for displayImage's pixels.
         //Therefore, this call should effectively copy the frameBuffer into the
         //displayImage.
+        Arrays.fill(m_displayComponents, (byte)0xFF);
+        //m_graphics.drawImage(m_displayImage, 0, 0, m_frameBuffer.GetWidth(), m_frameBuffer.GetHeight(), null);
+        //m_bufferStrategy.show();
         m_frameBuffer.CopyToByteArray(m_displayComponents);
-        m_graphics.drawImage(m_displayImage, 0, 0,
-                m_frameBuffer.GetWidth(), m_frameBuffer.GetHeight(), null);
+        System.out.println(m_frameBuffer.GetHeight());
+        System.out.println(m_frameBuffer.GetWidth());
+        //m_graphics.clearRect(0, 0, m_frameBuffer.GetWidth(), m_frameBuffer.GetHeight());
+        //m_displayImage.getData()
+        m_graphics.drawImage(m_displayImage, 0, 0, m_frameBuffer.GetWidth(), m_frameBuffer.GetHeight(), null);
         m_bufferStrategy.show();
     }
 
@@ -262,12 +278,13 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             System.out.println("MouseWheelEvent.WHEEL_UNIT_SCROLL");
 
 
-            drawImage();
+
         }
 
         if (e.getScrollType() == MouseWheelEvent.WHEEL_BLOCK_SCROLL) {
             System.out.println("MouseWheelEvent.WHEEL_BLOCK_SCROLL");
         }
+        drawImage();
     }
 
     @Override
@@ -280,7 +297,6 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
         endpointX = e.getX();
         endpointY = e.getY();
 
@@ -305,6 +321,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         this.xAngle += -xAngle;
 
         drawImage();
+
     }
 
     @Override

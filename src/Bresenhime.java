@@ -87,7 +87,7 @@ public class Bresenhime {
                 y += pdy;//цикл идёт по иксу; сдвинуть вверх или вниз, если по y
             }
 
-            d.drawPixel(x, y, zStart + zStep * incz * (t + 1), zBuffer, a, g, b, r);
+            d.drawPixel(x, y, zStart + zStep * incz * (t + 1), zBuffer, a, b, g, r);
         }
     }
 }
