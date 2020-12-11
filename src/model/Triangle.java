@@ -14,6 +14,9 @@ public class Triangle {
     private List<Side> sides; // clock-wise dir
     private Vector3 normal;
 
+    public Vector3 getNormal() {
+        return normal;
+    }
 
     public Triangle(List<Vertex> vertexList) {
 
@@ -127,7 +130,7 @@ public class Triangle {
 
     public boolean isVisible(Vector3 view) {
         float csalarProduct = normal.getScalarProduct(view);
-        if(csalarProduct < 0) {
+        if(csalarProduct > 0) {
             return false;
         }
         return true;

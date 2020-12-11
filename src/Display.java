@@ -1,4 +1,5 @@
 import logic.Camera;
+import logic.Lambert;
 import logic.Transformation;
 import model.*;
 
@@ -8,30 +9,39 @@ import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
-public class Display extends Canvas implements MouseWheelListener, MouseListener, MouseMotionListener, KeyListener
-{
+public class Display extends Canvas implements MouseWheelListener, MouseListener, MouseMotionListener, KeyListener {
     private double targetZ;
 
     private int brack = 0;
 
-    /** The window being used for display */
+    /**
+     * The window being used for display
+     */
     private final JFrame m_frame;
-    /** The bitmap representing the final image to display */
-    private final Bitmap         m_frameBuffer;
-    /** Used to display the framebuffer in the window */
+    /**
+     * The bitmap representing the final image to display
+     */
+    private final Bitmap m_frameBuffer;
+    /**
+     * Used to display the framebuffer in the window
+     */
     private final BufferedImage m_displayImage;
-    /** The pixels of the display image, as an array of byte components */
-    private final byte[]         m_displayComponents;
+    /**
+     * The pixels of the display image, as an array of byte components
+     */
+    private final byte[] m_displayComponents;
     private float[] zBuffer;
-    /** The buffers in the Canvas */
+    /**
+     * The buffers in the Canvas
+     */
     private final BufferStrategy m_bufferStrategy;
-    /** A graphics object that can draw into the Canvas's buffers */
-    private final Graphics       m_graphics;
+    /**
+     * A graphics object that can draw into the Canvas's buffers
+     */
+    private final Graphics m_graphics;
 
     private final Camera camera;
     private final int a = 255;
@@ -52,6 +62,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
     public int startpointX, endpointX;
     public int startpointY, endpointY;
+    public Lambert lambert;
 
     /**
      * Creates and initializes a new display.
@@ -60,10 +71,11 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
      * @param height How tall the display is, in pixels.
      * @param title  The text displayed in the window's title bar.
      */
-    public Display(int width, int height, String title, Camera camera, Geometry geometry)
-    {
+    public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
+        lambert = new Lambert(new Vector3(150, 50, 1000));
+
         Dimension size = new Dimension(width, height);
         setPreferredSize(size);
         setMinimumSize(size);
@@ -100,7 +112,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         m_frameBuffer = new Bitmap(m_frame_width, m_frame_height);
         m_displayImage = new BufferedImage(m_frame_width, m_frame_height, BufferedImage.TYPE_4BYTE_ABGR);
         m_displayComponents =
-                ((DataBufferByte)m_displayImage.getRaster().getDataBuffer()).getData();
+                ((DataBufferByte) m_displayImage.getRaster().getDataBuffer()).getData();
         this.xAngle = 0;
         this.yAngle = 0;
         this.cameraXAngle = 0;
@@ -108,7 +120,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         this.scale = 1;
 
         this.camera = camera;
-        camera.setPerspProjectionFOV(45, (float)m_frame_width/m_frame_height, 0.2, 25.0);
+        camera.setPerspProjectionFOV(45, (float) m_frame_width / m_frame_height, 0.2, 25.0);
         camera.setViewport(m_frame_width, m_frame_height);
         this.targetZ = camera.getTargetZ();
         this.geometry = geometry;
@@ -125,14 +137,28 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         drawImage();
     }
 
+    private float cos(Vector3 vector, Vector3 normal) {
+        Vector3 light = lambert.getSource().substractVector(vector).getNormalized();
+        return Math.max(0, normal.getScalarProduct(light));
+//        float num = normal.getScalarProduct(lambert.getLight());
+//        float den = (float) (Math.sqrt(Math.pow(normal.getX() , 2)
+//                        + Math.pow(normal.getY() , 2)
+//                        + Math.pow(normal.getZ() , 2))
+//                        * (Math.sqrt(Math.pow(lambert.getLight().getX(), 2)
+//                        + Math.pow(lambert.getLight().getY(), 2)
+//                        + Math.pow(lambert.getLight().getZ(), 2)
+//                )));
+//        return Math.max(0, num / den);
+    }
+
     public void drawPixel(int x, int y, float z, float[] zBuffer, byte a, byte b, byte g, byte r) {
         try {
             //System.out.println("X" + x);
             //System.out.println("Y" + y);
             int width = getWidth();
             int height = getHeight();
-            if((x <= width) && (y <= height)) {
-                if((zBuffer[y * width + x] - z) < 0) {
+            if ((x <= width) && (y <= height)) {
+                if ((zBuffer[y * width + x] - z) < 0) {
                     m_frameBuffer.DrawPixel(x, y, a, b, g, r);
                     zBuffer[y * width + x] = z;
                 } else {
@@ -146,6 +172,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     }
 
     private void drawImage() {
+        List<Float> coses = new ArrayList<>();
         clearScreen();
         initZBuffer();
         System.out.println("target");
@@ -157,8 +184,8 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         int g = r.nextInt(256);
         int rr = r.nextInt(256);*/
 
-         for(Triangle triangle: geometry.getTriangleList()) {
-             //triangle.sortNewVertices();
+        for (Triangle triangle : geometry.getTriangleList()) {
+            //triangle.sortNewVertices();
             Vertex v1 = triangle.getVertexByIndex(0);
             //System.out.println(v1);
             //Transformation tr = camera.getTransformation();
@@ -169,11 +196,11 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             //Transformation temp = this.transformMatrix.multiplyByMatrix(camera.getObserver().transpose()).multiplyByMatrix(camera.getProjection().transpose());
             //Transformation res = this.constMatrix.multiplyByMatrix(this.transformMatrix);
             //System.out.println(res1);
-             //res = temp;
-             //System.out.println("transf");
-             //System.out.println(camera.getTransformation());
-             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
-                //Transformation t = camera.getViewport();
+            //res = temp;
+            //System.out.println("transf");
+            //System.out.println(camera.getTransformation());
+            Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
+            //Transformation t = camera.getViewport();
            /* Vector3 vector1 = t.multiplyByVector(res.multiplyByVector(v1.getPosition()));
             //System.out.println(vector1);
 
@@ -181,73 +208,83 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             //System.out.println(vector2);
             Vector3 vector3 = t.multiplyByVector(res.multiplyByVector(v3.getPosition()));
             //System.out.println(vector3);*/
-             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
-             //System.out.println("W" + vector1.getVectorElement(3));
-             vector1.divideByW();
-             v1.setNewPosition(vector1);
+            Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
+            //System.out.println("W" + vector1.getVectorElement(3));
+            vector1.divideByW();
+            v1.setNewPosition(vector1);
 
-             Vector3 vector2 = res1.multiplyByVector(v2.getPosition());
-             vector2.divideByW();
-             v2.setNewPosition(vector2);
-             //System.out.println(vector2);
-             Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
-             vector3.divideByW();
-             v3.setNewPosition(vector3);
-             //triangle.sortNewVertices();
-             triangle.updateSides();
+            Vector3 vector2 = res1.multiplyByVector(v2.getPosition());
+            vector2.divideByW();
+            v2.setNewPosition(vector2);
+            //System.out.println(vector2);
+            Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
+            vector3.divideByW();
+            v3.setNewPosition(vector3);
+            //triangle.sortNewVertices();
+            triangle.updateSides();
+
+            float cos = (cos(vector1, triangle.getNormal())
+                    + cos(vector2, triangle.getNormal()) + cos(vector3, triangle.getNormal())) / 3.0f;
+
+            int a = 255;
+            int b = (int) (100 * cos);
+            int g = (int) (120 * cos);
+            int rr = (int) (220 * cos);
 
              /*int a = 100;
              int b = r.nextInt(256);
              int g = r.nextInt(256);
              int rr = r.nextInt(256);*/
-             if(triangle.isVisible(camera.getTarget().substractVector(camera.getEye()))){
-                 drawRasterizedTriangle(triangle.gerScanLines(), color, zBuffer);
-             } else {
-                 System.out.println("Not normal!");
-                 brack++;
-             }
 
-             System.out.println("Bracks = " + brack);
-             //System.out.println(vector3);
-             //swapBuffers();
+            if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()))) {
+                if (cos > 0) {
+                    coses.add(cos);
+                }
+                drawRasterizedTriangle(triangle.gerScanLines(), new Color(rr, g, b, a), zBuffer);
+            } else {
+                System.out.println("Not normal!");
+                brack++;
+            }
+
+            System.out.println("Bracks = " + brack);
+            //System.out.println(vector3);
+            //swapBuffers();
            /* Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)),this, a, b, g, rr, zBuffer);
             Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector3.getVectorElement(2), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), this, a, b, g, rr, zBuffer);
             Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), vector3.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this, a, b, g, rr, zBuffer);
             */
 
         }
+        System.out.println(coses);
         swapBuffers();
     }
 
-
-
     private void initZBuffer() {
         brack = 0;
-        for(int i = 0; i < zBuffer.length; i++) {
+        for (int i = 0; i < zBuffer.length; i++) {
             zBuffer[i] = Integer.MIN_VALUE;
         }
     }
 
     private void drawRasterizedTriangle(List<Side> sides, Color color, float[] zBuffer) {
-        for(Side side: sides) {
+        for (Side side : sides) {
             Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, (byte) color.getAlpha(), (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed(), zBuffer);
         }
     }
 
     public void clearScreen() {
-        m_frameBuffer.Clear((byte)0xFF);
-        Arrays.fill(m_displayComponents, (byte)0xFF);
+        m_frameBuffer.Clear((byte) 0xFF);
+        Arrays.fill(m_displayComponents, (byte) 0xFF);
     }
 
     /**
      * Displays in the window.
      */
-    private void swapBuffers()
-    {
+    private void swapBuffers() {
         //Display components should be the byte array used for displayImage's pixels.
         //Therefore, this call should effectively copy the frameBuffer into the
         //displayImage.
-        Arrays.fill(m_displayComponents, (byte)0xFF);
+        Arrays.fill(m_displayComponents, (byte) 0xFF);
         //m_graphics.drawImage(m_displayImage, 0, 0, m_frameBuffer.GetWidth(), m_frameBuffer.GetHeight(), null);
         //m_bufferStrategy.show();
         m_frameBuffer.CopyToByteArray(m_displayComponents);
@@ -267,7 +304,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         // positive value means rotate down
         if (e.getWheelRotation() < 0) {
             System.out.println("Rotated Up... " + e.getWheelRotation());
-            this.scale *= (Math.abs(e.getWheelRotation()) * 1.2) ;
+            this.scale *= (Math.abs(e.getWheelRotation()) * 1.2);
 
         } else {
             System.out.println("Rotated Down... " + e.getWheelRotation());
@@ -286,7 +323,6 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         // such as the page-up or page-down key.
         if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
             System.out.println("MouseWheelEvent.WHEEL_UNIT_SCROLL");
-
 
 
         }
