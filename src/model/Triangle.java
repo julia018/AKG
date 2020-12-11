@@ -93,7 +93,7 @@ public class Triangle {
         Vector3 firstSideVector = new Vector3(side1.getxEnd() - side1.getxStart(), side1.getyEnd() - side1.getyStart(), side1.getzEnd() - side1.getzStart());
         Vector3 secondSideVector = new Vector3(side2.getxEnd() - side2.getxStart(), side2.getyEnd() - side2.getyStart(), side2.getzEnd() - side2.getzStart());
 
-        Vector3 normal = firstSideVector.getCrossProduct(secondSideVector).getNormalized();
+        Vector3 normal = firstSideVector.getCrossProduct(secondSideVector);
         this.normal = normal;
     }
 
@@ -127,7 +127,7 @@ public class Triangle {
 
     public boolean isVisible(Vector3 view) {
         float csalarProduct = normal.getScalarProduct(view);
-        if(csalarProduct < 0) {
+        if(csalarProduct > 0) {
             return false;
         }
         return true;
