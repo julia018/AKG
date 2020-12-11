@@ -136,7 +136,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
                     m_frameBuffer.DrawPixel(x, y, a, b, g, r);
                     zBuffer[y * width + x] = z;
                 } else {
-                    brack++;
+                    //brack++;
                     System.out.println("Otbracovka!");
                 }
             }
@@ -158,6 +158,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         int rr = r.nextInt(256);*/
 
          for(Triangle triangle: geometry.getTriangleList()) {
+             //triangle.sortNewVertices();
             Vertex v1 = triangle.getVertexByIndex(0);
             //System.out.println(v1);
             //Transformation tr = camera.getTransformation();
@@ -192,13 +193,20 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
              Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
              vector3.divideByW();
              v3.setNewPosition(vector3);
+             //triangle.sortNewVertices();
              triangle.updateSides();
+
              /*int a = 100;
              int b = r.nextInt(256);
              int g = r.nextInt(256);
              int rr = r.nextInt(256);*/
+             if(triangle.isVisible(camera.getTarget().substractVector(camera.getEye()))){
+                 drawRasterizedTriangle(triangle.gerScanLines(), color, zBuffer);
+             } else {
+                 System.out.println("Not normal!");
+                 brack++;
+             }
 
-             drawRasterizedTriangle(triangle.gerScanLines(), color, zBuffer);
              System.out.println("Bracks = " + brack);
              //System.out.println(vector3);
              //swapBuffers();
@@ -210,6 +218,8 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         }
         swapBuffers();
     }
+
+
 
     private void initZBuffer() {
         brack = 0;

@@ -1,6 +1,6 @@
 package model;
 
-public class Vertex {
+public class Vertex implements Comparable<Vertex>{
 
     private Vector3 position;
     private Vector3 newPosition; // position after all stuff for projection
@@ -11,6 +11,7 @@ public class Vertex {
         this.position = position;
         this.normal = normal;
         this.uv = uv;
+        this.newPosition = position;
     }
 
     public Vector3 getPosition() {
@@ -33,5 +34,20 @@ public class Vertex {
 
     public void setNewPosition(Vector3 newPosition) {
         this.newPosition = newPosition;
+    }
+
+    @Override
+    public int compareTo(Vertex o) {
+        if(this.getNewPosition().getX() < o.getNewPosition().getX()) {
+            return -1;
+        } else if(this.getNewPosition().getX() == o.getNewPosition().getX()) {
+            if(this.getNewPosition().getY() > o.getNewPosition().getY()) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
+        }
     }
 }

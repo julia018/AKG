@@ -17,7 +17,7 @@ public class Side {
 
 
     public Side(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
-            if(yStart <= yEnd) {
+            /*if(yStart <= yEnd) {
                 this.yStart = yStart;
                 this.xStart = xStart;
                 this.zStart = zStart;
@@ -32,18 +32,31 @@ public class Side {
                 this.yEnd = yStart;
                 this.xEnd = xStart;
                 this.zEnd = zStart;
-            }
-
-            this.yDelta = yEnd - yStart;
-            this.zDelta = zEnd - zStart;
-            this.zSign = zDelta <= 0 ? -1 : 1;
+            }*/
+        this.yStart = yStart;
+        this.xStart = xStart;
+        this.zStart = zStart;
+        this.yEnd = yEnd;
+        this.xEnd = xEnd;
+        this.zEnd = zEnd;
+        this.yDelta = yEnd - yStart;
+        this.zDelta = zEnd - zStart;
+        this.zSign = zDelta <= 0 ? -1 : 1;
     }
 
     public boolean isYBelongigng(float y) {
-        if((y >= yStart)&(y <= yEnd)) {
-            return true;
+        if(yStart <= yEnd) {
+            if ((y >= yStart) & (y <= yEnd)) {
+                return true;
+            }
+            return false;
+
+        } else {
+            if ((y <= yStart) & (y >= yEnd)) {
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 
     // (y - y1)/(y2 - y1) = (x - x1)/(x2 - x1)

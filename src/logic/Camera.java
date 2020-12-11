@@ -146,4 +146,8 @@ public class Camera {
         this.modelZ += value;
         this.target.setVectorElement(2, this.modelZ);
     }
+
+    public Vector3 getEye() {
+        return eye;
+    }
 }
