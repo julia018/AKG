@@ -92,4 +92,8 @@ public class Vector3 {
         res += vector4[0] + " " + vector4[1] + " " + vector4[2];
         return res;
     }
+
+    public void multByValue(float val) {
+
+    }
 }

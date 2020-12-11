@@ -74,7 +74,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lambert = new Lambert(new Vector3(150, 50, 1000));
+        lambert = new Lambert(new Vector3(150, 50, 50));
 
         Dimension size = new Dimension(width, height);
         setPreferredSize(size);
@@ -138,8 +138,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     }
 
     private float cos(Vector3 vector, Vector3 normal) {
-        Vector3 light = lambert.getSource().substractVector(vector).getNormalized();
-        return Math.max(0, normal.getScalarProduct(light));
+        Vector3 light = vector.substractVector(lambert.getSource()).getNormalized();
+        Vector3 newLight = new Vector3(light.getX() * -1, light.getY() * -1, light.getZ() * -1);
+        return Math.max(0, normal.getScalarProduct(newLight));
 //        float num = normal.getScalarProduct(lambert.getLight());
 //        float den = (float) (Math.sqrt(Math.pow(normal.getX() , 2)
 //                        + Math.pow(normal.getY() , 2)
@@ -227,9 +228,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
                     + cos(vector2, triangle.getNormal()) + cos(vector3, triangle.getNormal())) / 3.0f;
 
             int a = 255;
-            int b = (int) (100 * cos);
-            int g = (int) (120 * cos);
-            int rr = (int) (220 * cos);
+            int b = (int) (255 * cos);
+            int g = (int) (0 * cos);
+            int rr = (int) (0 * cos);
 
              /*int a = 100;
              int b = r.nextInt(256);
