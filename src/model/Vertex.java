@@ -50,4 +50,8 @@ public class Vertex implements Comparable<Vertex>{
             return 1;
         }
     }
+
+    public Vector3 getNormal() {
+        return normal;
+    }
 }

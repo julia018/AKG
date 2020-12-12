@@ -122,6 +122,7 @@ public class Camera {
 
     public void addEyeZ(double value) {
         this.eye.addValueToVectorElement(2, value);
+
     }
 
     public Vector3 getTarget() {

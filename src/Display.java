@@ -43,6 +43,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
      */
     private final Graphics m_graphics;
 
+    private Random r = new Random();
     private final Camera camera;
     private final int a = 255;
     private final int b = 150;
@@ -74,7 +75,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lambert = new Lambert(new Vector3(150, 50, 50));
+        lambert = new Lambert(new Vector3(150, 0, 200));
 
         Dimension size = new Dimension(width, height);
         setPreferredSize(size);
@@ -159,7 +160,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             int width = getWidth();
             int height = getHeight();
             if ((x <= width) && (y <= height)) {
-                if ((zBuffer[y * width + x] - z) < 0) {
+                if (zBuffer[y * width + x] > z) {
                     m_frameBuffer.DrawPixel(x, y, a, b, g, r);
                     zBuffer[y * width + x] = z;
                 } else {
@@ -180,35 +181,16 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         System.out.println(camera.getTarget());
         System.out.println("trans");
         System.out.println(camera.getTransformation());
-        /*int a = 150;
-        int b = r.nextInt(256);
-        int g = r.nextInt(256);
-        int rr = r.nextInt(256);*/
 
         for (Triangle triangle : geometry.getTriangleList()) {
             //triangle.sortNewVertices();
             Vertex v1 = triangle.getVertexByIndex(0);
-            //System.out.println(v1);
-            //Transformation tr = camera.getTransformation();
 
             Vertex v2 = triangle.getVertexByIndex(1);
             //System.out.println(v2);
             Vertex v3 = triangle.getVertexByIndex(2);
-            //Transformation temp = this.transformMatrix.multiplyByMatrix(camera.getObserver().transpose()).multiplyByMatrix(camera.getProjection().transpose());
-            //Transformation res = this.constMatrix.multiplyByMatrix(this.transformMatrix);
-            //System.out.println(res1);
-            //res = temp;
-            //System.out.println("transf");
-            //System.out.println(camera.getTransformation());
             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
-            //Transformation t = camera.getViewport();
-           /* Vector3 vector1 = t.multiplyByVector(res.multiplyByVector(v1.getPosition()));
-            //System.out.println(vector1);
 
-            Vector3 vector2 = t.multiplyByVector(res.multiplyByVector(v2.getPosition()));
-            //System.out.println(vector2);
-            Vector3 vector3 = t.multiplyByVector(res.multiplyByVector(v3.getPosition()));
-            //System.out.println(vector3);*/
             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
             //System.out.println("W" + vector1.getVectorElement(3));
             vector1.divideByW();
@@ -223,19 +205,20 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             v3.setNewPosition(vector3);
             //triangle.sortNewVertices();
             triangle.updateSides();
+            Vector3 normal1 = v1.getNormal().getNormalized();
+            Vector3 normal2 = v2.getNormal().getNormalized();
+            Vector3 normal3 = v3.getNormal().getNormalized();
 
-            float cos = (cos(vector1, triangle.getNormal())
-                    + cos(vector2, triangle.getNormal()) + cos(vector3, triangle.getNormal())) / 3.0f;
+            float cos = (cos(vector1, normal1)
+                    + cos(vector2, normal2) + cos(vector3, normal3)) / 3.0f;
 
             int a = 255;
             int b = (int) (255 * cos);
-            int g = (int) (0 * cos);
-            int rr = (int) (0 * cos);
-
-             /*int a = 100;
-             int b = r.nextInt(256);
-             int g = r.nextInt(256);
-             int rr = r.nextInt(256);*/
+            int g = (int) (255 * cos);
+            int rr = (int) (255 * cos);
+            /*int b = r.nextInt(256);
+            int g = r.nextInt(256);
+            int rr = r.nextInt(256);*/
 
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()))) {
                 if (cos > 0) {
@@ -248,13 +231,6 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             }
 
             System.out.println("Bracks = " + brack);
-            //System.out.println(vector3);
-            //swapBuffers();
-           /* Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)),this, a, b, g, rr, zBuffer);
-            Bresenhime.drawBresenhamLine(Math.round(vector1.getVectorElement(0)), Math.round(vector1.getVectorElement(1)), vector1.getVectorElement(2), vector3.getVectorElement(2), Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), this, a, b, g, rr, zBuffer);
-            Bresenhime.drawBresenhamLine(Math.round(vector3.getVectorElement(0)), Math.round(vector3.getVectorElement(1)), vector3.getVectorElement(2), vector2.getVectorElement(2), Math.round(vector2.getVectorElement(0)), Math.round(vector2.getVectorElement(1)), this, a, b, g, rr, zBuffer);
-            */
-
         }
         System.out.println(coses);
         swapBuffers();
@@ -263,7 +239,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     private void initZBuffer() {
         brack = 0;
         for (int i = 0; i < zBuffer.length; i++) {
-            zBuffer[i] = Integer.MIN_VALUE;
+            zBuffer[i] = Integer.MAX_VALUE;
         }
     }
 
