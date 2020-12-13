@@ -75,7 +75,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lambert = new Lambert(new Vector3(150, 0, 200));
+        lambert = new Lambert(new Vector3(1, 1, -0.5f));
 
         Dimension size = new Dimension(width, height);
         setPreferredSize(size);
@@ -139,7 +139,8 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     }
 
     private float cos(Vector3 vector, Vector3 normal) {
-        Vector3 light = vector.substractVector(lambert.getSource()).getNormalized();
+        //Vector3 light = vector.substractVector(lambert.getSource()).getNormalized();
+        Vector3 light = lambert.getSource().getNormalized();
         Vector3 newLight = new Vector3(light.getX() * -1, light.getY() * -1, light.getZ() * -1);
         return Math.max(0, normal.getScalarProduct(newLight));
 //        float num = normal.getScalarProduct(lambert.getLight());
@@ -174,13 +175,10 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     }
 
     private void drawImage() {
-        List<Float> coses = new ArrayList<>();
         clearScreen();
         initZBuffer();
         System.out.println("target");
         System.out.println(camera.getTarget());
-        System.out.println("trans");
-        System.out.println(camera.getTransformation());
 
         for (Triangle triangle : geometry.getTriangleList()) {
             //triangle.sortNewVertices();
@@ -190,7 +188,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             //System.out.println(v2);
             Vertex v3 = triangle.getVertexByIndex(2);
             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
-
+            Transformation res2 = camera.getProjection().multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
             //System.out.println("W" + vector1.getVectorElement(3));
             vector1.divideByW();
@@ -205,34 +203,23 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             v3.setNewPosition(vector3);
             //triangle.sortNewVertices();
             triangle.updateSides();
-            Vector3 normal1 = v1.getNormal().getNormalized();
-            Vector3 normal2 = v2.getNormal().getNormalized();
-            Vector3 normal3 = v3.getNormal().getNormalized();
+            Vector3 normal1 = res2.multiplyByVector(v1.getNormal()).getNormalized();
+            Vector3 normal2 = res2.multiplyByVector(v2.getNormal()).getNormalized();
+            Vector3 normal3 = res2.multiplyByVector(v3.getNormal()).getNormalized();
 
             float cos = (cos(vector1, normal1)
                     + cos(vector2, normal2) + cos(vector3, normal3)) / 3.0f;
 
             int a = 255;
             int b = (int) (255 * cos);
-            int g = (int) (255 * cos);
-            int rr = (int) (255 * cos);
-            /*int b = r.nextInt(256);
-            int g = r.nextInt(256);
-            int rr = r.nextInt(256);*/
+            int g = (int) (0 * cos);
+            int rr = (int) (0 * cos);
 
-            if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()))) {
-                if (cos > 0) {
-                    coses.add(cos);
-                }
+            if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {
                 drawRasterizedTriangle(triangle.gerScanLines(), new Color(rr, g, b, a), zBuffer);
-            } else {
-                System.out.println("Not normal!");
-                brack++;
             }
 
-            System.out.println("Bracks = " + brack);
         }
-        System.out.println(coses);
         swapBuffers();
     }
 
