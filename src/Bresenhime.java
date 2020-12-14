@@ -1,3 +1,5 @@
+import model.Vector3;
+
 import java.awt.*;
 
 public class Bresenhime {
@@ -7,7 +9,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, byte a, byte b, byte g, byte r, float[] zBuffer)
+    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, int a, int b, int g, int r, float[] zBuffer, Vector3 normalStart, Vector3 normalEnd, Vector3 invertedLight)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -16,11 +18,14 @@ public class Bresenhime {
      */
     {
         int x, y, dx, dy, incx, incy, incz, pdx, pdy, es, el, err;
-        float dz, zStep;
+        float dz, zStep, z, u;
+        Vector3 lightnew;
         //g.setColor(Color.BLACK);
         dx = xend - xstart;//проекция на ось икс
         dy = yend - ystart;//проекция на ось игрек
         dz = zEnd - zStart;
+        Vector3 dNormal = normalEnd.substractVector(normalStart);
+        int dn = 0;
 
         if(dz <= 0) {
             incz = -1;
@@ -60,6 +65,7 @@ public class Bresenhime {
             es = dy;
             el = dx;
             zStep = Math.abs(dz / dx);
+            dn = dx;
         } else//случай, когда прямая скорее "высокая", чем длинная, т.е. вытянута по оси y
         {
             pdx = 0;
@@ -67,12 +73,14 @@ public class Bresenhime {
             es = dx;
             el = dy;//тогда в цикле будем двигаться по y
             zStep = Math.abs(dz / dy);
+            dn = dy;
         }
 
         x = xstart;
         y = ystart;
+        float cos = Math.max(0, normalStart.getScalarProduct(invertedLight));
         err = el / 2;
-        d.drawPixel(x, y, zStart, zBuffer, a, b, g, r);//ставим первую точку
+        d.drawPixel(x, y, zStart, zBuffer, (byte)a, (byte) Math.round(b * cos), (byte) Math.round(g * cos), (byte) Math.round(r * cos));//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
         for (int t = 0; t < el; t++)//идём по всем точкам, начиная со второй и до последней
@@ -82,12 +90,21 @@ public class Bresenhime {
                 err += el;
                 x += incx;//сдвинуть прямую (сместить вверх или вниз, если цикл проходит по иксам)
                 y += incy;//или сместить влево-вправо, если цикл проходит по y
+
             } else {
                 x += pdx;//продолжить тянуть прямую дальше, т.е. сдвинуть влево или вправо, если
                 y += pdy;//цикл идёт по иксу; сдвинуть вверх или вниз, если по y
             }
+            if(pdx != 0) {
+                u = (x - xstart) / (float)dx;
+            } else {
+                u = (y - ystart) / (float)dy;
+            }
+            Vector3 newNormal = (normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u))).getNormalized();
 
-            d.drawPixel(x, y, zStart + zStep * incz * (t + 1), zBuffer, a, b, g, r);
+            z = zStart + zStep * incz * (t + 1);
+            cos = Math.max(0, newNormal.getScalarProduct(invertedLight));
+            d.drawPixel(x, y, z, zBuffer, (byte)a, (byte) Math.round(b * cos), (byte) Math.round(g * cos), (byte) Math.round(r * cos));
         }
     }
 }

@@ -1,8 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Side {
 
     private float xStart;
@@ -13,26 +10,23 @@ public class Side {
     private float zEnd;
     private float yDelta;
     private float zDelta;
+    private float xDelta;
     private float zSign;
 
+    private Vector3 normalStart;
+    private Vector3 normalEnd;
 
-    public Side(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
-            /*if(yStart <= yEnd) {
-                this.yStart = yStart;
-                this.xStart = xStart;
-                this.zStart = zStart;
-                this.yEnd = yEnd;
-                this.xEnd = xEnd;
-                this.zEnd = zEnd;
 
-            } else {
-                this.yStart = yEnd;
-                this.xStart = xEnd;
-                this.zStart = zEnd;
-                this.yEnd = yStart;
-                this.xEnd = xStart;
-                this.zEnd = zStart;
-            }*/
+    public Vector3 getNormalStart() {
+        return normalStart;
+    }
+
+    public Vector3 getNormalEnd() {
+        return normalEnd;
+    }
+
+    public Side(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd, Vector3 normStart, Vector3 normEnd) {
+
         this.yStart = yStart;
         this.xStart = xStart;
         this.zStart = zStart;
@@ -41,7 +35,11 @@ public class Side {
         this.zEnd = zEnd;
         this.yDelta = yEnd - yStart;
         this.zDelta = zEnd - zStart;
+        xDelta = xEnd - xStart;
         this.zSign = zDelta <= 0 ? -1 : 1;
+
+        this.normalStart = normStart;
+        this.normalEnd = normEnd;
     }
 
     public boolean isYBelongigng(float y) {
@@ -73,6 +71,17 @@ public class Side {
 
     public float getxStart() {
         return xStart;
+    }
+
+    public Vector3 getNormalOfCross(float y, float x) {
+        float vectorLength = (float) Math.sqrt(xDelta * xDelta + yDelta * yDelta);
+        float deltaY = y - yStart;
+        float deltaX = x - xStart;
+        float vectorPartLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        float u = vectorPartLength / vectorLength;
+        //Vector3 resNormal = normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u)).getNormalized();
+        Vector3 resNormal = normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u)).getNormalized();
+        return resNormal;
     }
 
     public void setxStart(float xStart) {

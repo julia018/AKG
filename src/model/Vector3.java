@@ -1,5 +1,7 @@
 package model;
 
+import logic.Transformation;
+
 public class Vector3 {
 
     private float x;
@@ -93,7 +95,11 @@ public class Vector3 {
         return res;
     }
 
-    public void multByValue(float val) {
+    public Vector3 multByValue(float val) {
+        return new Vector3(this.getX() * val, this.getY() * val, this.getZ() * val);
+    }
 
+    public Vector3 addVector(Vector3 vector3) {
+        return new Vector3(this.getX() + vector3.getX(), this.getY() + vector3.getY(), this.getZ() + vector3.getZ());
     }
 }

@@ -45,7 +45,7 @@ public class Triangle {
         return new Vector2(yCoordinates.get(0), yCoordinates.get(2));
     }
 
-    public List<Side> gerScanLines() {
+    public List<Side> getScanLines() {
         List<Side> res = new ArrayList<>();
         Vector2 yMinMax = getMinMaxY();
         int yMin = Math.round(yMinMax.getX());
@@ -65,11 +65,11 @@ public class Triangle {
             if(side.isYBelongigng((float)y)) {
                 float x = side.getXCross(y);
                 float z = side.getZofCross(y);
-                ends.add(new Point(x, z));
+                ends.add(new Point(x, z, side.getNormalOfCross(y, x)));
             }
         }
         if(ends.size() >= 2) {
-            return new Side(ends.get(0).getX(), y, ends.get(0).getZ(), ends.get(1).getX(), y,  ends.get(1).getZ());
+            return new Side(ends.get(0).getX(), y, ends.get(0).getZ(), ends.get(1).getX(), y,  ends.get(1).getZ(), ends.get(0).getNormal(), ends.get(1).getNormal());
         } else return null;
     }
 
@@ -79,9 +79,9 @@ public class Triangle {
         Vertex vert2 = vertices.get(1);
         Vertex vert3 = vertices.get(2);
 
-        Side side1 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ());
-        Side side2 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ());
-        Side side3 = new Side(vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ());
+        Side side1 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ(), vert2.getNewNormal(), vert1.getNewNormal());
+        Side side2 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ(), vert2.getNewNormal(), vert3.getNewNormal());
+        Side side3 = new Side(vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ(), vert3.getNewNormal(), vert1.getNewNormal());
 
         sides.clear();
         sides.add(side1);

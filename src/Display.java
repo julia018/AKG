@@ -75,7 +75,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lambert = new Lambert(new Vector3(1, 1, -0.5f));
+        lambert = new Lambert(new Vector3(1, 1, -1));
 
         Dimension size = new Dimension(width, height);
         setPreferredSize(size);
@@ -141,7 +141,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     private float cos(Vector3 vector, Vector3 normal) {
         //Vector3 light = vector.substractVector(lambert.getSource()).getNormalized();
         Vector3 light = lambert.getSource().getNormalized();
-        Vector3 newLight = new Vector3(light.getX() * -1, light.getY() * -1, light.getZ() * -1);
+        Vector3 newLight = lambert.getInvertedLight();
         return Math.max(0, normal.getScalarProduct(newLight));
 //        float num = normal.getScalarProduct(lambert.getLight());
 //        float den = (float) (Math.sqrt(Math.pow(normal.getX() , 2)
@@ -202,21 +202,30 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             vector3.divideByW();
             v3.setNewPosition(vector3);
             //triangle.sortNewVertices();
-            triangle.updateSides();
+
             Vector3 normal1 = res2.multiplyByVector(v1.getNormal()).getNormalized();
+            v1.setNewNormal(normal1);
             Vector3 normal2 = res2.multiplyByVector(v2.getNormal()).getNormalized();
+            v2.setNewNormal(normal2);
             Vector3 normal3 = res2.multiplyByVector(v3.getNormal()).getNormalized();
+            v3.setNewNormal(normal3);
+            triangle.updateSides();
 
             float cos = (cos(vector1, normal1)
                     + cos(vector2, normal2) + cos(vector3, normal3)) / 3.0f;
 
-            int a = 255;
+            /*int a = 255;
             int b = (int) (255 * cos);
             int g = (int) (0 * cos);
-            int rr = (int) (0 * cos);
+            int rr = (int) (0 * cos);*/
+
+            int a = 255;
+            int b = 255;
+            int g = 255;
+            int rr = 255;
 
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {
-                drawRasterizedTriangle(triangle.gerScanLines(), new Color(rr, g, b, a), zBuffer);
+                drawRasterizedTriangle(triangle.getScanLines(), new Color(rr, g, b, a), zBuffer, lambert.getInvertedLight());
             }
 
         }
@@ -230,9 +239,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         }
     }
 
-    private void drawRasterizedTriangle(List<Side> sides, Color color, float[] zBuffer) {
+    private void drawRasterizedTriangle(List<Side> sides, Color color, float[] zBuffer, Vector3 light) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, (byte) color.getAlpha(), (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed(), zBuffer);
+            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, color.getAlpha(), color.getBlue(), color.getGreen(), color.getRed(), zBuffer, side.getNormalStart(), side.getNormalEnd(), light);
         }
     }
 
