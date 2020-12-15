@@ -1,3 +1,4 @@
+import logic.Phong;
 import model.Vector3;
 
 import java.awt.*;
@@ -9,7 +10,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, int a, int b, int g, int r, float[] zBuffer, Vector3 normalStart, Vector3 normalEnd, Vector3 invertedLight)
+    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 normalStart, Vector3 normalEnd, Vector3 lightSource, Phong phong, Vector3 eyePoint)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -17,6 +18,7 @@ public class Bresenhime {
      * Можно писать что-нибудь вроде g.fillRect (x, y, 1, 1);
      */
     {
+        Color color;
         int x, y, dx, dy, incx, incy, incz, pdx, pdy, es, el, err;
         float dz, zStep, z, u;
         Vector3 lightnew;
@@ -78,9 +80,10 @@ public class Bresenhime {
 
         x = xstart;
         y = ystart;
-        float cos = Math.max(0, normalStart.getScalarProduct(invertedLight));
+        float cos = cos(new Vector3(xstart, ystart, zStart), normalStart, lightSource);
         err = el / 2;
-        d.drawPixel(x, y, zStart, zBuffer, (byte)a, (byte) Math.round(b * cos), (byte) Math.round(g * cos), (byte) Math.round(r * cos));//ставим первую точку
+        color = phong.getResultPhongColor(new Vector3(xstart, ystart, zStart), normalStart, eyePoint);
+        d.drawPixel(x, y, zStart, zBuffer, (byte)255, (byte) Math.round(color.getBlue() * cos), (byte) Math.round(color.getGreen() * cos), (byte) Math.round(color.getRed() * cos));//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
         for (int t = 0; t < el; t++)//идём по всем точкам, начиная со второй и до последней
@@ -103,8 +106,16 @@ public class Bresenhime {
             Vector3 newNormal = (normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u))).getNormalized();
 
             z = zStart + zStep * incz * (t + 1);
-            cos = Math.max(0, newNormal.getScalarProduct(invertedLight));
-            d.drawPixel(x, y, z, zBuffer, (byte)a, (byte) Math.round(b * cos), (byte) Math.round(g * cos), (byte) Math.round(r * cos));
+            cos = cos(new Vector3(x, y, z), newNormal, lightSource);
+            color = phong.getResultPhongColor(new Vector3(x, y, z), newNormal, eyePoint);
+            d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) Math.round(color.getBlue() * cos), (byte) Math.round(color.getGreen() * cos), (byte) Math.round(color.getRed() * cos));
         }
+
+    }
+
+    private static float cos(Vector3 vector, Vector3 normal, Vector3 lightSource) {
+        Vector3 light = vector.substractVector(lightSource).getNormalized();
+        Vector3 newLight = new Vector3(light.getX() * -1, light.getY() * -1, light.getZ() * -1);
+        return Math.max(0, normal.getScalarProduct(newLight));
     }
 }
