@@ -1,4 +1,5 @@
 import logic.Phong;
+import logic.Transformation;
 import model.Vector3;
 
 import java.awt.*;
@@ -10,7 +11,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 normalStart, Vector3 normalEnd, Vector3 lightSource, Phong phong, Vector3 eyePoint)
+    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 normalStart, Vector3 normalEnd, Vector3 lightSource, Phong phong, Vector3 eyePoint, Transformation transform)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -82,7 +83,7 @@ public class Bresenhime {
         y = ystart;
         float cos = cos(new Vector3(xstart, ystart, zStart), normalStart, lightSource);
         err = el / 2;
-        color = phong.getResultPhongColor(new Vector3(xstart, ystart, zStart), normalStart, eyePoint);
+        color = phong.getResultPhongColor(transform.getInversedMAtrix().multiplyByVector(new Vector3(xstart, ystart, zStart)), normalStart, eyePoint);
         d.drawPixel(x, y, zStart, zBuffer, (byte)255, (byte) Math.round(color.getBlue() * cos), (byte) Math.round(color.getGreen() * cos), (byte) Math.round(color.getRed() * cos));//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
@@ -107,7 +108,7 @@ public class Bresenhime {
 
             z = zStart + zStep * incz * (t + 1);
             cos = cos(new Vector3(x, y, z), newNormal, lightSource);
-            color = phong.getResultPhongColor(new Vector3(x, y, z), newNormal, eyePoint);
+            color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(x, y, z)), newNormal, eyePoint);
             d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) Math.round(color.getBlue() * cos), (byte) Math.round(color.getGreen() * cos), (byte) Math.round(color.getRed() * cos));
         }
 

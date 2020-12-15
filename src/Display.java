@@ -78,7 +78,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lightPoint = new Vector3(-200, 400, 100);
+        lightPoint = new Vector3(-200, 400, 10);
         lambert = new Lambert(lightPoint);
         phong = new Phong(0, 0, 0, 255, 255, 255, 255, 255, 255, lightPoint);
         Dimension size = new Dimension(width, height);
@@ -185,6 +185,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             Transformation res2 = camera.getProjection().multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
             Transformation res3 = camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
+
             //System.out.println("W" + vector1.getVectorElement(3));
             vector1.divideByW();
             v1.setNewPosition(vector1);
@@ -205,9 +206,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             Vector3 normal3 = res2.multiplyByVector(v3.getNormal()).getNormalized();
             v3.setNewNormal(normal3);
             triangle.updateSides();
-
+            Transformation viewportMultProject = camera.getViewport().multiplyByMatrix(camera.getProjection());
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {
-                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lambert.getSource());
+                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lambert.getSource(), viewportMultProject);
             }
 
         }
@@ -221,9 +222,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         }
     }
 
-    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light) {
+    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, new Vector3(0, 0, 5));
+            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, new Vector3(0, 0, 5), transformation);
         }
     }
 

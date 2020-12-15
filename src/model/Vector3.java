@@ -2,6 +2,8 @@ package model;
 
 import logic.Transformation;
 
+import java.lang.reflect.Array;
+
 public class Vector3 {
 
     private float x;
@@ -102,4 +104,19 @@ public class Vector3 {
     public Vector3 addVector(Vector3 vector3) {
         return new Vector3(this.getX() + vector3.getX(), this.getY() + vector3.getY(), this.getZ() + vector3.getZ());
     }
+
+    public Vector3 mutlByMatrix(Transformation matrix) {
+        float[] vector4 = new float[4];
+        double[] matr = matrix.getMatrix();
+        for(int i = 0; i < 4; i++) {
+            float sum = 0;
+            for(int j = 0; j < 4; j++) {
+                sum += vector4[i] * matr[j * 4 + i];
+            }
+            vector4[i] = sum;
+        }
+        return new Vector3(vector4[0], vector4[1], vector4[2]);
+    }
+
+
 }

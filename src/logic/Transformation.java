@@ -1,5 +1,6 @@
 package logic;
 
+import model.Matrix;
 import model.Vector3;
 
 public class Transformation {
@@ -8,6 +9,10 @@ public class Transformation {
 
     public Transformation() {
         this.matrix = new double[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    }
+
+    public Transformation(double[] matrix) {
+        this.matrix = matrix.clone();
     }
 
     public Transformation multiplyByMatrix(Transformation matrix2) {
@@ -110,5 +115,15 @@ public class Transformation {
             res += " " + matrix[i];
         }
         return res;
+    }
+
+    public double[] getMatrix() {
+        return matrix;
+    }
+
+    public Transformation getInversedMAtrix() {
+        Matrix matrix = new Matrix(this.matrix, 4);
+        Matrix inversed = matrix.inverse();
+        return new Transformation(inversed.getMatrixAsArray());
     }
 }

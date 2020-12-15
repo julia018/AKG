@@ -55,19 +55,20 @@ public class Phong {
     }
 
     private Color getMirrorLight(Vector3 eye, Vector3 vector, Vector3 normal) {
-        Vector3 reflectedLight = getReflectedLight(new Vector3(0, 0, -10), vector, normal).getNormalized();
+        Vector3 reflectedLight = getReflectedLight(new Vector3(-50, 50, 10), vector, normal).getNormalized();
         Vector3 eyeVector = vector.substractVector(eye).getNormalized();
         float result = MIRRORCOEFF * (float) Math.pow(reflectedLight.getScalarProduct(eyeVector), SURFSHINECOEFF);
         return new Color(result * rMirror, result * gMirror, result * bMirror);
     }
 
     private Vector3 getReflectedLight(Vector3 light, Vector3 vector, Vector3 normal) {
-        Vector3 invertedLight = vector.substractVector(light);
+        Vector3 invertedLight = vector.substractVector(light).getNormalized();
         float scalarProduct = invertedLight.getScalarProduct(normal);
         return invertedLight.substractVector(normal.multByValue(2 * scalarProduct));
     }
 
     public Color getResultPhongColor(Vector3 vector, Vector3 normal, Vector3 eyePoint) {
+
         Color backColor = getBackgroundLight();
         Color diffColor = getDiffuseLght(vector, normal);
         Color mirrorColor = getMirrorLight(eyePoint, vector, normal);
