@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bd48aff7-9874-4e6e-af25-198ea226f7cd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/model/Matrix.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Bresenhime.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Bresenhime.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Display.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Display.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/Phong.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Phong.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/Transformation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Transformation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Vector3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Vector3.java" afterDir="false" />
-    </list>
+    <list default="true" id="bd48aff7-9874-4e6e-af25-198ea226f7cd" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -393,12 +385,12 @@
       <workItem from="1607784711679" duration="5072000" />
       <workItem from="1607882052182" duration="11946000" />
       <workItem from="1607923353980" duration="8514000" />
-      <workItem from="1608009163535" duration="8107000" />
+      <workItem from="1608009163535" duration="8396000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="264428000" />
+    <option name="totallyTimeSpent" value="264717000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
