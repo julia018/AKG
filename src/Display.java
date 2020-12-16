@@ -78,9 +78,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lightPoint = new Vector3(-200, 400, 10);
+        lightPoint = new Vector3(-200, 200, 10);
         lambert = new Lambert(lightPoint);
-        phong = new Phong(0, 0, 0, 255, 255, 255, 255, 255, 255, lightPoint);
+        phong = new Phong(255, 255, 255, 255, 255, 255, 255, 255, 255, lightPoint);
         Dimension size = new Dimension(width, height);
         setPreferredSize(size);
         setMinimumSize(size);
@@ -171,9 +171,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     private void drawImage() {
         clearScreen();
         initZBuffer();
-        System.out.println("target");
-        System.out.println(camera.getTarget());
-
+        Transformation inversedProject = camera.getProjection().getInversedMAtrix();
         for (Triangle triangle : geometry.getTriangleList()) {
             //triangle.sortNewVertices();
             Vertex v1 = triangle.getVertexByIndex(0);
@@ -183,13 +181,10 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             Vertex v3 = triangle.getVertexByIndex(2);
             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
             Transformation res2 = camera.getProjection().multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
-            Transformation res3 = camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
+            //Transformation res3 = camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
-
-            //System.out.println("W" + vector1.getVectorElement(3));
             vector1.divideByW();
             v1.setNewPosition(vector1);
-
             Vector3 vector2 = res1.multiplyByVector(v2.getPosition());
             vector2.divideByW();
             v2.setNewPosition(vector2);
@@ -197,7 +192,6 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             Vector3 vector3 = res1.multiplyByVector(v3.getPosition());
             vector3.divideByW();
             v3.setNewPosition(vector3);
-            //triangle.sortNewVertices();
 
             Vector3 normal1 = res2.multiplyByVector(v1.getNormal()).getNormalized();
             v1.setNewNormal(normal1);
@@ -206,9 +200,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             Vector3 normal3 = res2.multiplyByVector(v3.getNormal()).getNormalized();
             v3.setNewNormal(normal3);
             triangle.updateSides();
-            Transformation viewportMultProject = camera.getViewport().multiplyByMatrix(camera.getProjection());
+            Transformation viewportMultProject = (camera.getViewport().multiplyByMatrix(camera.getProjection())).getInversedMAtrix();
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {
-                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lambert.getSource(), viewportMultProject);
+                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lightPoint, viewportMultProject, inversedProject);
             }
 
         }
@@ -222,9 +216,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         }
     }
 
-    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation) {
+    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation, Transformation inversedProject) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, new Vector3(0, 0, 5), transformation);
+            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, inversedProject);
         }
     }
 
@@ -241,8 +235,6 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         //Therefore, this call should effectively copy the frameBuffer into the
         //displayImage.
         Arrays.fill(m_displayComponents, (byte) 0xFF);
-        //m_graphics.drawImage(m_displayImage, 0, 0, m_frameBuffer.GetWidth(), m_frameBuffer.GetHeight(), null);
-        //m_bufferStrategy.show();
         m_frameBuffer.CopyToByteArray(m_displayComponents);
         System.out.println(m_frameBuffer.GetHeight());
         System.out.println(m_frameBuffer.GetWidth());

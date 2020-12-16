@@ -6,6 +6,7 @@ public class Vertex implements Comparable<Vertex>{
     private Vector3 newPosition; // position after all stuff for projection
     private Vector3 normal;
     private Vector3 newNormal;
+    private float w;
     private Vector2 uv; // for texture
 
     public Vertex(Vector3 position, Vector3 normal, Vector2 uv) {
@@ -14,6 +15,7 @@ public class Vertex implements Comparable<Vertex>{
         this.uv = uv;
         this.newPosition = position;
         this.newNormal = normal;
+        this.w = 1;
     }
 
     public Vector3 getPosition() {
@@ -63,5 +65,13 @@ public class Vertex implements Comparable<Vertex>{
 
     public void setNewNormal(Vector3 newNormal) {
         this.newNormal = newNormal;
+    }
+
+    public float getW() {
+        return w;
+    }
+
+    public void setW(float w) {
+        this.w = w;
     }
 }
