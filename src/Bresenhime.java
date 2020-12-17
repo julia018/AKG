@@ -11,7 +11,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector3 lightSource, Phong phong, Vector3 eyePoint, Transformation transform, Transformation inversedProject)
+    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector3 lightSource, Phong phong, Vector3 eyePoint, Transformation transform, float wStart, float wEnd, Transformation proj, Transformation vp)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -22,12 +22,13 @@ public class Bresenhime {
 
         //Vector3 normalStart = inversedProject.multiplyByVector(startNormal);
         //Vector3 normalEnd = inversedProject.multiplyByVector(endNormal);
-        Vector3 normalStart = inversedProject.multiplyByVector(startNormal).getNormalized();
-        Vector3 normalEnd = inversedProject.multiplyByVector(endNormal).getNormalized();
+        Vector3 normalStart = startNormal;
+        Vector3 normalEnd = endNormal;
         Color color;
         int x, y, dx, dy, incx, incy, incz, pdx, pdy, es, el, err;
         float dz, zStep, z, u;
         Vector3 lightnew;
+        float curW = 0;
         //g.setColor(Color.BLACK);
         dx = xend - xstart;//проекция на ось икс
         dy = yend - ystart;//проекция на ось игрек
@@ -82,13 +83,12 @@ public class Bresenhime {
             zStep = Math.abs(dz / dy);
             dn = dy;
         }
-
         x = xstart;
         y = ystart;
-        float cos = cos(new Vector3(xstart, ystart, zStart), inversedProject.multiplyByVector(normalStart), lightSource);
+        //float cos = cos(new Vector3(xstart, ystart, zStart), inversedProject.multiplyByVector(normalStart), lightSource);
         err = el / 2;
         //Transformation inversedMatrix = transform.getInversedMAtrix();
-        color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(xstart, ystart, zStart)), normalStart, eyePoint);
+        color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(xstart * wStart, ystart * wStart, zStart*wStart, wStart)), normalStart, eyePoint, proj, vp);
         d.drawPixel(x, y, zStart, zBuffer, (byte)255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
@@ -110,10 +110,10 @@ public class Bresenhime {
                 u = (y - ystart) / (float)dy;
             }
             Vector3 newNormal = (normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u))).getNormalized();
-
+            curW = wStart * u + wEnd * (1 - u);
             z = zStart + zStep * incz * (t + 1);
-            cos = cos(new Vector3(x, y, z), newNormal, lightSource);
-            color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(x, y, z)), newNormal, eyePoint);
+            //cos = cos(new Vector3(x, y, z), newNormal, lightSource);
+            color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(x * curW, y * curW, z * curW, curW)), newNormal, eyePoint, proj, vp);
             d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());
         }
 

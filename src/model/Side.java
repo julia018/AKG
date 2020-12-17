@@ -15,6 +15,8 @@ public class Side {
 
     private Vector3 normalStart;
     private Vector3 normalEnd;
+    private float wStart;
+    private float wEnd;
 
 
     public Vector3 getNormalStart() {
@@ -25,7 +27,7 @@ public class Side {
         return normalEnd;
     }
 
-    public Side(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd, Vector3 normStart, Vector3 normEnd) {
+    public Side(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd, Vector3 normStart, Vector3 normEnd, float wStart, float wEnd) {
 
         this.yStart = yStart;
         this.xStart = xStart;
@@ -40,6 +42,8 @@ public class Side {
 
         this.normalStart = normStart;
         this.normalEnd = normEnd;
+        this.wStart = wStart;
+        this.wEnd = wEnd;
     }
 
     public boolean isYBelongigng(float y) {
@@ -55,6 +59,12 @@ public class Side {
             }
             return false;
         }
+    }
+
+    public float getWCross(float y) {
+        float res = (y - yStart) * (wEnd - wStart);
+        res /= (yEnd - yStart);
+        return res + wStart;
     }
 
     // (y - y1)/(y2 - y1) = (x - x1)/(x2 - x1)
@@ -126,5 +136,21 @@ public class Side {
 
     public float getzSign() {
         return zSign;
+    }
+
+    public float getwStart() {
+        return wStart;
+    }
+
+    public void setwStart(float wStart) {
+        this.wStart = wStart;
+    }
+
+    public float getwEnd() {
+        return wEnd;
+    }
+
+    public void setwEnd(float wEnd) {
+        this.wEnd = wEnd;
     }
 }

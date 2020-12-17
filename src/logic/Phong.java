@@ -50,8 +50,8 @@ public class Phong {
         return res;
     }
 
-    private float[] getDiffuseLght(Vector3 vector, Vector3 normal) {
-        float cos = getCos(vector, normal, lightPoint);
+    private float[] getDiffuseLght(Vector3 vector, Vector3 normal, Vector3 eye, Transformation proj, Transformation vp) {
+        float cos = getCos(vector, normal, lightPoint, proj, vp);
         float[] res = new float[4];
         res[0] = mat_diffuse[0] * cos;
         res[1] = mat_diffuse[1] * cos;
@@ -60,9 +60,11 @@ public class Phong {
         return res;
     }
 
-    private float getCos(Vector3 vector, Vector3 normal, Vector3 lightVector) {
-        Vector3 lightDir = lightVector.substractVector(vector).getNormalized();
-        float scalarProduct = normal.getScalarProduct(lightDir);
+    private float getCos(Vector3 vector, Vector3 normal, Vector3 lightPoint, Transformation proj, Transformation vp) {
+        Vector3 lightDir = new Vector3(0, 0, 1);
+        //Vector3 lightDir = new Vector3(eye.getX()*-1, eye.getY()*-1, eye.getZ() * -1).getNormalized();
+        Vector3 normInObserver = proj.getInversedMAtrix().multiplyByVector(normal);
+        float scalarProduct = lightDir.getScalarProduct(normInObserver);
         return Math.max(0, scalarProduct);
     }
 
@@ -84,10 +86,10 @@ public class Phong {
         return invertedLight.substractVector(normal.multByValue(2 * scalarProduct));
     }
 
-    public Color getResultPhongColor(Vector3 vector, Vector3 normal, Vector3 eyePoint) {
+    public Color getResultPhongColor(Vector3 vector, Vector3 normal, Vector3 eyePoint, Transformation proj, Transformation vp) {
 
         float[] backColor = getBackgroundLight();
-        float[] diffColor = getDiffuseLght(vector, normal);
+        float[] diffColor = getDiffuseLght(vector, normal, eyePoint, proj, vp);
         float[] mirrorColor = getMirrorLight(eyePoint, vector, normal);
         //int newRed = backColor.getRed();
         //int newGreen = backColor.getGreen();

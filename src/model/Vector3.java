@@ -19,6 +19,13 @@ public class Vector3 {
         this.vector4 = new float[]{x, y, z, 1};
     }
 
+    public Vector3(float x, float y, float z, float w) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.vector4 = new float[]{x, y, z, w};
+    }
+
     public Vector3 getNormalized() {
         float length = getLength();
         float normX = this.x / length;

@@ -38,6 +38,7 @@ public class Vertex implements Comparable<Vertex>{
 
     public void setNewPosition(Vector3 newPosition) {
         this.newPosition = newPosition;
+        this.w = newPosition.getVectorElement(3);
     }
 
     @Override

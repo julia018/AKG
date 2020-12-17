@@ -78,9 +78,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lightPoint = new Vector3(-200, 200, 10);
+        lightPoint = new Vector3(0, 0, 0);
         lambert = new Lambert(lightPoint);
-        phong = new Phong(255, 255, 255, 255, 255, 255, 255, 255, 255, lightPoint);
+
         Dimension size = new Dimension(width, height);
         setPreferredSize(size);
         setMinimumSize(size);
@@ -134,7 +134,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
         System.out.println(m_displayComponents.length);
         System.out.println(m_frame_height * m_frame_width * 4);
-
+        phong = new Phong(255, 255, 255, 255, 255, 255, 255, 255, 255, lightPoint);
         addMouseWheelListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -200,9 +200,10 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             Vector3 normal3 = res2.multiplyByVector(v3.getNormal()).getNormalized();
             v3.setNewNormal(normal3);
             triangle.updateSides();
-            Transformation viewportMultProject = (camera.getViewport().multiplyByMatrix(camera.getProjection())).getInversedMAtrix();
+            //Vector3 light = camera.getProjection().multiplyByVector(lightPoint);
+            Transformation viewportInv = camera.getViewport().getInversedMAtrix();
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {
-                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lightPoint, viewportMultProject, inversedProject);
+                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lightPoint, viewportInv);
             }
 
         }
@@ -216,9 +217,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         }
     }
 
-    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation, Transformation inversedProject) {
+    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, inversedProject);
+            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, side.getwStart(), side.getwEnd(), camera.getProjection(), camera.getViewport());
         }
     }
 
