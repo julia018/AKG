@@ -4,13 +4,9 @@
     <list default="true" id="bd48aff7-9874-4e6e-af25-198ea226f7cd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/Bresenhime.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Bresenhime.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Display.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Display.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/OBJFileParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/OBJFileParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/logic/Phong.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Phong.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logic/Transformation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/logic/Transformation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/Side.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Side.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/Triangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Triangle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Vector3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Vector3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Vertex.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,11 +34,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/Side.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="99" column="5" lean-forward="true" selection-start-line="99" selection-start-column="5" selection-end-line="99" selection-end-column="5" />
+            <state relative-caret-position="156">
+              <caret line="95" column="49" lean-forward="true" selection-start-line="95" selection-start-column="49" selection-end-line="95" selection-end-column="49" />
               <folding>
                 <element signature="e#3431#3432#0" expanded="true" />
                 <element signature="e#3460#3461#0" expanded="true" />
@@ -57,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Bresenhime.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1479">
-              <caret line="91" column="167" selection-start-line="91" selection-start-column="167" selection-end-line="91" selection-end-column="167" />
+            <state relative-caret-position="631">
+              <caret line="119" column="132" selection-start-line="119" selection-start-column="132" selection-end-line="119" selection-end-column="132" />
             </state>
           </provider>
         </entry>
@@ -123,8 +119,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/logic/Phong.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="249">
-              <caret line="99" lean-forward="true" selection-start-line="99" selection-end-line="99" />
+            <state relative-caret-position="117">
+              <caret line="52" column="20" selection-start-line="52" selection-start-column="20" selection-end-line="52" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -135,8 +131,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/Triangle.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="78" column="34" lean-forward="true" selection-start-line="78" selection-start-column="34" selection-end-line="78" selection-end-column="34" />
+            <state relative-caret-position="207">
+              <caret line="194" column="19" lean-forward="true" selection-start-line="194" selection-start-column="19" selection-end-line="194" selection-end-column="19" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#346#347#0" expanded="true" />
@@ -149,8 +145,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Display.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="145">
-              <caret line="204" column="30" lean-forward="true" selection-start-line="204" selection-start-column="30" selection-end-line="204" selection-end-column="30" />
+            <state relative-caret-position="249">
+              <caret line="207" column="35" selection-start-line="207" selection-start-column="35" selection-end-line="207" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -216,13 +212,13 @@
         <option value="$PROJECT_DIR$/src/model/Point.java" />
         <option value="$PROJECT_DIR$/src/logic/Transformation.java" />
         <option value="$PROJECT_DIR$/src/logic/OBJFileParser.java" />
-        <option value="$PROJECT_DIR$/src/logic/Phong.java" />
         <option value="$PROJECT_DIR$/src/model/Vector3.java" />
-        <option value="$PROJECT_DIR$/src/Display.java" />
         <option value="$PROJECT_DIR$/src/model/Vertex.java" />
-        <option value="$PROJECT_DIR$/src/Bresenhime.java" />
         <option value="$PROJECT_DIR$/src/model/Side.java" />
+        <option value="$PROJECT_DIR$/src/Display.java" />
         <option value="$PROJECT_DIR$/src/model/Triangle.java" />
+        <option value="$PROJECT_DIR$/src/logic/Phong.java" />
+        <option value="$PROJECT_DIR$/src/Bresenhime.java" />
       </list>
     </option>
   </component>
@@ -233,8 +229,8 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="644" />
-    <option name="y" value="9" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
     <option name="width" value="712" />
     <option name="height" value="729" />
   </component>
@@ -410,12 +406,12 @@
       <workItem from="1607923353980" duration="8514000" />
       <workItem from="1608009163535" duration="8396000" />
       <workItem from="1608122589852" duration="14844000" />
-      <workItem from="1608183737485" duration="24793000" />
+      <workItem from="1608183737485" duration="35028000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="315604000" />
+    <option name="totallyTimeSpent" value="325839000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -451,37 +447,6 @@
       <window_info anchor="right" id="Ant Build" order="7" weight="0.24962178" />
       <window_info anchor="right" id="Database" order="8" weight="0.32980332" />
     </layout>
-    <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17700455" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Image Layers" order="2" />
-      <window_info id="Designer" order="3" />
-      <window_info id="UI Designer" order="4" />
-      <window_info id="Capture Tool" order="5" />
-      <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3207856" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34697217" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.45826513" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3289689" />
-      <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" />
-      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="12" weight="0.3289689" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="1" weight="0.25" />
-      <window_info anchor="right" id="Palette" order="2" />
-      <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info anchor="right" id="Maven" order="4" weight="0.32980332" />
-      <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="right" id="Palette&#9;" order="6" />
-      <window_info anchor="right" id="Ant Build" order="7" weight="0.24962178" />
-      <window_info anchor="right" id="Database" order="8" weight="0.32980332" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -530,16 +495,10 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/logic/Phong.java</url>
-          <line>63</line>
+          <url>file://$PROJECT_DIR$/src/Bresenhime.java</url>
+          <line>114</line>
           <properties />
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/model/Triangle.java</url>
-          <line>49</line>
-          <properties />
-          <option name="timeStamp" value="23" />
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -798,46 +757,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Display.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="204" column="30" lean-forward="true" selection-start-line="204" selection-start-column="30" selection-end-line="204" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/logic/Phong.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="99" lean-forward="true" selection-start-line="99" selection-end-line="99" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Bresenhime.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1479">
-          <caret line="91" column="167" selection-start-line="91" selection-start-column="167" selection-end-line="91" selection-end-column="167" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/Triangle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="78" column="34" lean-forward="true" selection-start-line="78" selection-start-column="34" selection-end-line="78" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#346#347#0" expanded="true" />
-            <element signature="e#375#376#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/model/Side.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="99" column="5" lean-forward="true" selection-start-line="99" selection-start-column="5" selection-end-line="99" selection-end-column="5" />
+        <state relative-caret-position="156">
+          <caret line="95" column="49" lean-forward="true" selection-start-line="95" selection-start-column="49" selection-end-line="95" selection-end-column="49" />
           <folding>
             <element signature="e#3431#3432#0" expanded="true" />
             <element signature="e#3460#3461#0" expanded="true" />
@@ -848,6 +771,42 @@
             <element signature="e#3635#3636#0" expanded="true" />
             <element signature="e#3667#3668#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Triangle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="194" column="19" lean-forward="true" selection-start-line="194" selection-start-column="19" selection-end-line="194" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#346#347#0" expanded="true" />
+            <element signature="e#375#376#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Display.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="207" column="35" selection-start-line="207" selection-start-column="35" selection-end-line="207" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/logic/Phong.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="52" column="20" selection-start-line="52" selection-start-column="20" selection-end-line="52" selection-end-column="20" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Bresenhime.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="631">
+          <caret line="119" column="132" selection-start-line="119" selection-start-column="132" selection-end-line="119" selection-end-column="132" />
         </state>
       </provider>
     </entry>

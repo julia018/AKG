@@ -203,10 +203,13 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             normal3 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v3.getNormal());
             v3.setNewNormal(normal3);
             triangle.updateSides();
+            triangle.updateNormal();
+            triangle.sortNewVertices();
+            triangle.updateSides();
             //Vector3 light = camera.getProjection().multiplyByVector(lightPoint);
             Transformation viewportInv = camera.getViewport().getInversedMAtrix();
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {
-                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lightPoint, viewportInv, res3);
+                drawRasterizedTriangle(triangle, triangle.getScanLines(), zBuffer, lightPoint, viewportInv, res3);
             }
 
         }
@@ -220,9 +223,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         }
     }
 
-    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation, Transformation obs) {
+    private void drawRasterizedTriangle(Triangle tr, List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation, Transformation obs) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, side.getwStart(), side.getwEnd(), camera.getProjection(), camera.getViewport(), obs);
+            Bresenhime.drawBresenhamLine(tr, Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, side.getwStart(), side.getwEnd(), camera.getProjection(), camera.getViewport(), obs);
         }
     }
 

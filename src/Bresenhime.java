@@ -1,5 +1,6 @@
 import logic.Phong;
 import logic.Transformation;
+import model.Triangle;
 import model.Vector3;
 
 import java.awt.*;
@@ -11,7 +12,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector3 lightSource, Phong phong, Vector3 eyePoint, Transformation transform, float wStart, float wEnd, Transformation proj, Transformation vp, Transformation normMatrix)
+    public static void drawBresenhamLine(Triangle tr, int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector3 lightSource, Phong phong, Vector3 eyePoint, Transformation transform, float wStart, float wEnd, Transformation proj, Transformation vp, Transformation normMatrix)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -111,13 +112,12 @@ public class Bresenhime {
                 u = (y - ystart) / (float)dy;
             }
             float newZinv = 1f/normalStart.getZ() * (1-u) + 1f/normalEnd.getZ()*u;
-            Vector3 newNormal = (normalStart.multByValue(1-u).addVector(normalEnd.multByValue(u)));
-            newNormal.setVectorElement(2, 1f/newZinv);
+            Vector3 newNormal = tr.getInterpolatedNormal(x, y).getNormalized();
             float inxZ = 1f/zStart * (1-u) + 1f/zEnd*u;
             curW = wStart * u + wEnd * (1 - u);
-            z = 1f/inxZ;
+            z = tr.getInterpolatedZ(x, y);
             //cos = cos(new Vector3(x, y, z), newNormal, lightSource);
-            color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(x * curW, y * curW, z * curW, curW)), newNormal.getNormalized(), eyePoint, proj, vp);
+            color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(x * curW, y * curW, z * curW, curW)), newNormal, eyePoint, proj, vp);
             d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());
         }
 

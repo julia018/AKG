@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 public class Side {
 
     private float xStart;
@@ -69,16 +71,16 @@ public class Side {
 
     // (y - y1)/(y2 - y1) = (x - x1)/(x2 - x1)
     public float getXCross(float y) {
-        float res = (y - yStart) * (xEnd - xStart);
-        res /= (yEnd - yStart);
-        return res + xStart;
+        float u = (y - yStart) / (yEnd - yStart);
+        return xStart * (1 - u) + xEnd * u;
     }
 
-    public float getZofCross(float y) {
-        float part = Math.abs((y - yStart) / yDelta);
-        float inv = (float) (1.0 / zStart * (1 - part) + 1.0 / zEnd * part);
-        //return zStart + part * Math.abs(zDelta) * zSign;
-        return 1f / inv;
+    public float getZofCross(List<Float> alphas, List<Vertex> vertices) {
+        Vertex v1 = vertices.get(0);
+        Vertex v2 = vertices.get(1);
+        Vertex v3 = vertices.get(2);
+        float zinv = 1f/v1.getNewPosition().getZ() * alphas.get(0) + 1f/v2.getNewPosition().getZ() * alphas.get(1) + 1f/v3.getNewPosition().getZ() * alphas.get(2);
+        return 1f/zinv;
     }
 
     public float getxStart() {
@@ -91,11 +93,11 @@ public class Side {
         float deltaX = x - xStart;
         float deltaZ = z- zStart;
         //float vectorPartLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        float u = (z - zStart) / (zEnd - zStart);
+        float u = (x - xStart) / (xEnd - xStart);
         float newZinv = 1f/normalStart.getZ() * (1-u) + 1f/normalEnd.getZ()*u;
-        //Vector3 resNormal = normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u)).getNormalized();
-        Vector3 resNormal = normalStart.multByValue(1-u).addVector(normalEnd.multByValue(u));
-        resNormal.setVectorElement(2, 1f/newZinv);
+        float newX = normalStart.getX() * (1-u) + normalEnd.getX()*u;
+        float newY = normalStart.getY() * (1-u) + normalEnd.getY()*u;
+        Vector3 resNormal =  new Vector3(newX, newY, 1f/newZinv);
         return resNormal;
     }
 
