@@ -63,7 +63,7 @@ public class Phong {
     private float getCos(Vector3 vector, Vector3 normal, Vector3 lightPoint, Transformation proj, Transformation vp) {
         Vector3 lightDir = new Vector3(0, 0, 1);
         //Vector3 lightDir = new Vector3(eye.getX()*-1, eye.getY()*-1, eye.getZ() * -1).getNormalized();
-        Vector3 normInObserver = proj.getInversedMAtrix().multiplyByVector(normal);
+        Vector3 normInObserver = normal;
         float scalarProduct = lightDir.getScalarProduct(normInObserver);
         return Math.max(0, scalarProduct);
     }

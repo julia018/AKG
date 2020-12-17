@@ -3,16 +3,16 @@ package model;
 import logic.Camera;
 import logic.Transformation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Triangle {
 
     private List<Vertex> vertices;
     private List<Side> sides; // clock-wise dir
     private Vector3 normal;
+    private Vertex min;
+    private Vertex max;
 
     public Vector3 getNormal() {
         return normal;
@@ -36,20 +36,27 @@ public class Triangle {
         this.vertices.set(index, vertex);
     }
 
-    private Vector2 getMinMaxY() {
-        List<Float> yCoordinates = new ArrayList<>();
-        for(Vertex vertex: vertices) {
-            yCoordinates.add(vertex.getNewPosition().getY());
+    private List<Integer> getMinMaxY() {
+        HashMap<Integer, Float> map = new HashMap<>();
+        LinkedHashMap<Integer, Float> soretedmap = new LinkedHashMap<>();
+        for(int i = 0; i < vertices.size(); i++) {
+            map.put(i, vertices.get(i).getNewPosition().getY());
         }
-        Collections.sort(yCoordinates);
-        return new Vector2(yCoordinates.get(0), yCoordinates.get(2));
+        //Collections.sort(yCoordinates);
+        map.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEachOrdered(x -> soretedmap.put(x.getKey(), x.getValue()));
+        return new ArrayList<Integer>(soretedmap.keySet());
     }
 
     public List<Side> getScanLines() {
         List<Side> res = new ArrayList<>();
-        Vector2 yMinMax = getMinMaxY();
-        int yMin = Math.round(yMinMax.getX());
-        float yMax = Math.round(yMinMax.getY());
+        List<Integer> vertexIndexes = getMinMaxY();
+        min = vertices.get(vertexIndexes.get(0));
+        max = vertices.get(vertexIndexes.get(2));
+        int yMin = Math.round(min.getNewPosition().getY());
+        float yMax = Math.round(max.getNewPosition().getY());
         for(int i = yMin; i <= yMax; i++) {
             Side scanLine = getScanLine(i);
             if(scanLine != null) {
@@ -59,6 +66,11 @@ public class Triangle {
         return res;
     }
 
+    private List<Float> getBaricCoords(float x, float y, float z) {
+        List<Float> res = new ArrayList<>();
+        return new ArrayList<>();
+    }
+
     private Side getScanLine(int y) {
         List<Point> ends = new ArrayList<>();
         for(Side side: sides) {
@@ -66,7 +78,7 @@ public class Triangle {
                 float x = side.getXCross(y);
                 float z = side.getZofCross(y);
                 float w = side.getWCross(y);
-                ends.add(new Point(x, z, side.getNormalOfCross(y, x), w));
+                ends.add(new Point(x, z, side.getNormalOfCross(y, x, z), w));
             }
         }
         if(ends.size() >= 2) {

@@ -10,6 +10,9 @@ public class Transformation {
     public Transformation() {
         this.matrix = new double[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
     }
+    public Transformation(boolean i) {
+        this.matrix = new double[]{1, 0, 0, 0, 1, 0, 0, 0, 1};
+    }
 
     public Transformation(double[] matrix) {
         this.matrix = matrix.clone();
@@ -125,5 +128,38 @@ public class Transformation {
         Matrix matrix = new Matrix(this.matrix, 4);
         Matrix inversed = matrix.inverse();
         return new Transformation(inversed.getMatrixAsArray());
+    }
+
+    public Transformation getInversedMAtrix3() {
+        Matrix matrix = new Matrix(this.matrix, 3);
+        Matrix inversed = matrix.inverse();
+        return new Transformation(inversed.getMatrixAsArray());
+    }
+
+    public Vector3 multiplyByVector3(Vector3 vector) {
+        Vector3 res = new Vector3(0, 0, 0);
+        for (int row = 0; row < 3; row++) {
+            float sum = 0;
+            for (int col = 0; col < 3; col++) {
+                sum += this.matrix[row * 3 + col] * vector.getVectorElement(col);
+            }
+            res.setVectorElement(row, sum);
+        }
+        return res;
+    }
+
+    public Transformation transpose3() {
+        Transformation res = new Transformation(true);
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                res.setMatrixElement(i * 3 + j, this.matrix[j * 3 + i]);
+            }
+        }
+        return res;
+    }
+
+    public Transformation get3by3Matrix() {
+        double[] elements = new double[]{matrix[0], matrix[1], matrix[2], matrix[4], matrix[5], matrix[6], matrix[8], matrix[9], matrix[10]};
+        return new Transformation(elements);
     }
 }

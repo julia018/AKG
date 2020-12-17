@@ -1,5 +1,7 @@
 package model;
 
+import logic.Transformation;
+
 public class Vertex implements Comparable<Vertex>{
 
     private Vector3 position;
@@ -74,5 +76,13 @@ public class Vertex implements Comparable<Vertex>{
 
     public void setW(float w) {
         this.w = w;
+    }
+
+    public Vector3 transformNormal(Transformation transf, Vector3 vect, Transformation observer) {
+        Transformation matr3by3  = transf.get3by3Matrix();
+        matr3by3 = matr3by3.getInversedMAtrix3().transpose3();
+        Vector3 resNorm = matr3by3.multiplyByVector3(vect);
+        //resNorm = observer.multiplyByVector(resNorm);
+        return resNorm;
     }
 }

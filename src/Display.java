@@ -180,8 +180,8 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             //System.out.println(v2);
             Vertex v3 = triangle.getVertexByIndex(2);
             Transformation res1 = camera.getViewport().multiplyByMatrix(camera.getProjection()).multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
-            Transformation res2 = camera.getProjection().multiplyByMatrix(camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle)).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
-            //Transformation res3 = camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle).multiplyByMatrix(camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale));
+            Transformation res2 = camera.getTransformation().rotateY(yAngle).rotateX(xAngle).scale(scale);
+            Transformation res3 = camera.getObserver().rotateX(cameraXAngle).rotateY(cameraYAngle);
             Vector3 vector1 = res1.multiplyByVector(v1.getPosition());
             vector1.divideByW();
             v1.setNewPosition(vector1);
@@ -193,17 +193,20 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             vector3.divideByW();
             v3.setNewPosition(vector3);
 
-            Vector3 normal1 = res2.multiplyByVector(v1.getNormal()).getNormalized();
+            Vector3 normal1 = v1.transformNormal(res3.multiplyByMatrix(res2), v1.getNormal().getNormalized(), res3).getNormalized();
+            normal1 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v1.getNormal());
             v1.setNewNormal(normal1);
-            Vector3 normal2 = res2.multiplyByVector(v2.getNormal()).getNormalized();
+            Vector3 normal2 = res3.multiplyByMatrix(res2).getInversedMAtrix().transpose().multiplyByVector(normal1);
+            normal2 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v2.getNormal());
             v2.setNewNormal(normal2);
-            Vector3 normal3 = res2.multiplyByVector(v3.getNormal()).getNormalized();
+            Vector3 normal3 = v3.transformNormal(res3.multiplyByMatrix(res2), v3.getNormal().getNormalized(), res3).getNormalized();
+            normal3 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v3.getNormal());
             v3.setNewNormal(normal3);
             triangle.updateSides();
             //Vector3 light = camera.getProjection().multiplyByVector(lightPoint);
             Transformation viewportInv = camera.getViewport().getInversedMAtrix();
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {
-                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lightPoint, viewportInv);
+                drawRasterizedTriangle(triangle.getScanLines(), zBuffer, lightPoint, viewportInv, res3);
             }
 
         }
@@ -217,9 +220,9 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
         }
     }
 
-    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation) {
+    private void drawRasterizedTriangle(List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation, Transformation obs) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, side.getwStart(), side.getwEnd(), camera.getProjection(), camera.getViewport());
+            Bresenhime.drawBresenhamLine(Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, side.getwStart(), side.getwEnd(), camera.getProjection(), camera.getViewport(), obs);
         }
     }
 

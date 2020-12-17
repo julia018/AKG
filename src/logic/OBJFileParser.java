@@ -62,7 +62,7 @@ public class OBJFileParser {
 
         } else if(normalMatcher.find()) {
 
-            normals.add(new Vector3(Float.parseFloat(normalMatcher.group(1)), Float.parseFloat(normalMatcher.group(2)), Float.parseFloat(normalMatcher.group(3))));
+            normals.add(new Vector3(Float.parseFloat(normalMatcher.group(1)), Float.parseFloat(normalMatcher.group(2)), Float.parseFloat(normalMatcher.group(3)), 1));
 
         } else if(uvMatcher.find()) {
 

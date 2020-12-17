@@ -34,7 +34,7 @@ public class Vector3 {
         return new Vector3(normX, normY, normZ);
     }
 
-    private float getLength() {
+    public float getLength() {
         return (float)Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 

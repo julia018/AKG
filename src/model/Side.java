@@ -76,21 +76,26 @@ public class Side {
 
     public float getZofCross(float y) {
         float part = Math.abs((y - yStart) / yDelta);
-        return zStart + part * Math.abs(zDelta) * zSign;
+        float inv = (float) (1.0 / zStart * (1 - part) + 1.0 / zEnd * part);
+        //return zStart + part * Math.abs(zDelta) * zSign;
+        return 1f / inv;
     }
 
     public float getxStart() {
         return xStart;
     }
 
-    public Vector3 getNormalOfCross(float y, float x) {
+    public Vector3 getNormalOfCross(float y, float x, float z) {
         float vectorLength = (float) Math.sqrt(xDelta * xDelta + yDelta * yDelta);
         float deltaY = y - yStart;
         float deltaX = x - xStart;
-        float vectorPartLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        float u = vectorPartLength / vectorLength;
+        float deltaZ = z- zStart;
+        //float vectorPartLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        float u = (z - zStart) / (zEnd - zStart);
+        float newZinv = 1f/normalStart.getZ() * (1-u) + 1f/normalEnd.getZ()*u;
         //Vector3 resNormal = normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u)).getNormalized();
-        Vector3 resNormal = normalStart.multByValue(u).addVector(normalEnd.multByValue(1 - u)).getNormalized();
+        Vector3 resNormal = normalStart.multByValue(1-u).addVector(normalEnd.multByValue(u));
+        resNormal.setVectorElement(2, 1f/newZinv);
         return resNormal;
     }
 
