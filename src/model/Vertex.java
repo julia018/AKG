@@ -6,6 +6,7 @@ public class Vertex implements Comparable<Vertex>{
 
     private Vector3 position;
     private Vector3 newPosition; // position after all stuff for projection
+    private Vector3 newObserverPosition;
     private Vector3 normal;
     private Vector3 newNormal;
     private float w;
@@ -16,6 +17,7 @@ public class Vertex implements Comparable<Vertex>{
         this.normal = normal;
         this.uv = uv;
         this.newPosition = position;
+        this.newObserverPosition = position;
         this.newNormal = normal;
         this.w = 1;
     }
@@ -84,5 +86,13 @@ public class Vertex implements Comparable<Vertex>{
         Vector3 resNorm = matr3by3.multiplyByVector3(vect);
         //resNorm = observer.multiplyByVector(resNorm);
         return resNorm;
+    }
+
+    public Vector3 getNewObserverPosition() {
+        return newObserverPosition;
+    }
+
+    public void setNewObserverPosition(Vector3 newObserverPosition) {
+        this.newObserverPosition = newObserverPosition;
     }
 }

@@ -16,6 +16,7 @@ public class Triangle {
     private Vertex max;
     private List<Vertex> sortedVertices = new ArrayList<>();
 
+
     public Vector3 getNormal() {
         return normal;
     }
@@ -120,9 +121,23 @@ public class Triangle {
 
     }
 
-    public void updateSides() {
+    public Vector3 getInterpolatedObserverVector(float x, float y) {
+        List<Float> alphas = this.getAlphas(x, y);
+        float alpha0 = alphas.get(0);
+        float alpha1 = alphas.get(1);
+        float alpha2 = alphas.get(2);
 
-        getScanLines();
+        Vector3 obsv0 = vertices.get(0).getNewObserverPosition();
+        Vector3 obsv1 = vertices.get(1).getNewObserverPosition();
+        Vector3 obsv2 = vertices.get(2).getNewObserverPosition();
+
+        float resx = obsv0.getX() * alpha0 + obsv1.getX() * alpha1 + obsv2.getX() * alpha2;
+        float resy = obsv0.getY() * alpha0 + obsv1.getY() * alpha1 + obsv2.getY() * alpha2;
+        float reszinv = 1f/obsv0.getZ() * alpha0 + 1f/obsv1.getZ() * alpha1 + 1f/obsv2.getZ() * alpha2;
+        return new Vector3(resx, resy, 1f/reszinv);
+    }
+
+    public void updateSides() {
         Vertex vert1 = vertices.get(0);
         Vertex vert2 = vertices.get(1);
         Vertex vert3 = vertices.get(2);

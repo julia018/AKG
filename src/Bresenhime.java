@@ -90,7 +90,8 @@ public class Bresenhime {
         //float cos = cos(new Vector3(xstart, ystart, zStart), inversedProject.multiplyByVector(normalStart), lightSource);
         err = el / 2;
         //Transformation inversedMatrix = transform.getInversedMAtrix();
-        color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(xstart * wStart, ystart * wStart, zStart*wStart, wStart)), normalStart.getNormalized(), eyePoint, proj, vp);
+        Vector3 vectorObserver = tr.getInterpolatedObserverVector(x, y);
+        color = phong.getResultPhongColor(vectorObserver, tr.getInterpolatedNormal(xstart,ystart).getNormalized(), eyePoint, proj, vp);
         d.drawPixel(x, y, zStart, zBuffer, (byte)255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
@@ -117,7 +118,8 @@ public class Bresenhime {
             curW = wStart * u + wEnd * (1 - u);
             z = tr.getInterpolatedZ(x, y);
             //cos = cos(new Vector3(x, y, z), newNormal, lightSource);
-            color = phong.getResultPhongColor(transform.multiplyByVector(new Vector3(x * curW, y * curW, z * curW, curW)), newNormal, eyePoint, proj, vp);
+            Vector3 vectorObserver1 = tr.getInterpolatedObserverVector(x, y);
+            color = phong.getResultPhongColor(vectorObserver1, newNormal, eyePoint, proj, vp);
             d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());
         }
 
