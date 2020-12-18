@@ -78,7 +78,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Display(int width, int height, String title, Camera camera, Geometry geometry) {
         //Set the canvas's preferred, minimum, and maximum size to prevent
         //unintentional resizing.
-        lightPoint = new Vector3(0, 0, 0);
+        lightPoint = new Vector3(0, 0, 1);
         lambert = new Lambert(lightPoint);
 
         Dimension size = new Dimension(width, height);
@@ -134,7 +134,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
         System.out.println(m_displayComponents.length);
         System.out.println(m_frame_height * m_frame_width * 4);
-        phong = new Phong(255, 255, 255, 255, 255, 255, 255, 255, 255, lightPoint);
+        phong = new Phong(lightPoint);
         addMouseWheelListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -199,19 +199,14 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
             vector3.divideByW();
             v3.setNewPosition(vector3);
             v3.setNewObserverPosition(vector3obs);
-            Vector3 normal1 = v1.transformNormal(res3.multiplyByMatrix(res2), v1.getNormal().getNormalized(), res3).getNormalized();
-            normal1 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v1.getNormal());
+            Vector3 normal1 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v1.getNormal());
             v1.setNewNormal(normal1);
-            Vector3 normal2 = res3.multiplyByMatrix(res2).getInversedMAtrix().transpose().multiplyByVector(normal1);
-            normal2 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v2.getNormal());
+            Vector3 normal2 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v2.getNormal());
             v2.setNewNormal(normal2);
-            Vector3 normal3 = v3.transformNormal(res3.multiplyByMatrix(res2), v3.getNormal().getNormalized(), res3).getNormalized();
-            normal3 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v3.getNormal());
+            Vector3 normal3 = (res3.multiplyByMatrix(res2)).getInversedMAtrix().transpose().multiplyByVector(v3.getNormal());
             v3.setNewNormal(normal3);
             triangle.updateSides();
             triangle.updateNormal();
-            //triangle.sortNewVertices();
-            //triangle.updateSides();
             //Vector3 light = camera.getProjection().multiplyByVector(lightPoint);
             Transformation viewportInv = camera.getViewport().getInversedMAtrix();
             if (triangle.isVisible(camera.getTarget().substractVector(camera.getEye()).getNormalized())) {

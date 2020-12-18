@@ -2,7 +2,7 @@ package model;
 
 import logic.Transformation;
 
-public class Vertex implements Comparable<Vertex>{
+public class Vertex implements Comparable<Vertex>, Cloneable{
 
     private Vector3 position;
     private Vector3 newPosition; // position after all stuff for projection
@@ -94,5 +94,11 @@ public class Vertex implements Comparable<Vertex>{
 
     public void setNewObserverPosition(Vector3 newObserverPosition) {
         this.newObserverPosition = newObserverPosition;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        // TODO: Your custom clone logic
+        return super.clone();
     }
 }

@@ -163,8 +163,12 @@ public class Triangle {
         this.normal = normal;
     }
 
-    public void sortNewVertices() {
+    public void sortNewVertices() throws CloneNotSupportedException {
         List<Vertex> sortedList = new ArrayList<>();
+        List<Vertex> startList = new ArrayList<>();
+        for(Vertex v : vertices) {
+            startList.add((Vertex) v.clone());
+        }
         Collections.sort(this.vertices);
         sortedList.add(vertices.get(0));
         vertices.remove(0);
@@ -187,7 +191,8 @@ public class Triangle {
         });
 
         sortedList.addAll(vertices);
-        vertices = sortedList;
+        sortedVertices = sortedList;
+        vertices = startList;
 
     }
 

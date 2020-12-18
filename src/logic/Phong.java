@@ -27,16 +27,8 @@ public class Phong {
     private Vector3 lightPoint;
 
 
-    public Phong(int rBack, int gBack, int bBack, int rDiff, int gDiff, int bDiff, int rMirror, int gMirror, int bMirror, Vector3 light) {
-        this.rBack = rBack;
-        this.gBack = gBack;
-        this.bBack = bBack;
-        this.rDiff = rDiff;
-        this.gDiff = gDiff;
-        this.bDiff = bDiff;
-        this.rMirror = rMirror;
-        this.gMirror = gMirror;
-        this.bMirror = bMirror;
+    public Phong(Vector3 light) {
+
         this.lightPoint = light;
 
     }
@@ -62,7 +54,7 @@ public class Phong {
 
     private float getCos(Vector3 vector, Vector3 normal, Vector3 lightPoint, Transformation proj, Transformation vp) {
         //Vector3 lightDir = new Vector3(-1, 1, 1).getNormalized();
-        Vector3 lightDir = (new Vector3(-1, 1, 0)).substractVector(vector).getNormalized();
+        Vector3 lightDir = (lightPoint).getNormalized();
         //Vector3 lightDir = new Vector3(eye.getX()*-1, eye.getY()*-1, eye.getZ() * -1).getNormalized();
         Vector3 normInObserver = normal;
         float scalarProduct = lightDir.getScalarProduct(normInObserver);
@@ -83,17 +75,35 @@ public class Phong {
     private Vector3 getReflectedLight(Vector3 light, Vector3 normal) {
         //Vector3 invertedLight = light.substractVector(vector).getNormalized();
         float scalarProduct = Math.max(0, light.getScalarProduct(normal));
-        return light.substractVector(normal.multByValue(2 * scalarProduct));
+        return (normal.multByValue(2 * scalarProduct)).substractVector(light).getNormalized();
     }
 
     public Color getResultPhongColor(Vector3 vector, Vector3 normal, Vector3 eyePoint, Transformation proj, Transformation vp) {
         Vector3 V = (new Vector3(0, 0, 0)).substractVector(vector).getNormalized();
+        Color res = null;
         float[] backColor = getBackgroundLight();
         float[] diffColor = getDiffuseLght(vector, normal, eyePoint, proj, vp);
-        float[] mirrorColor = getMirrorLight(V, new Vector3(-1, 1, 1), normal);
+        float[] mirrorColor = getMirrorLight(V, lightPoint, normal);
         //int newRed = backColor.getRed();
         //int newGreen = backColor.getGreen();
         //int newBlue = backColor.getBlue();
-        return new Color(backColor[0] + mirrorColor[0], backColor[1] + mirrorColor[1], backColor[2] + mirrorColor[2], 1f);
+        float resRed = backColor[0] + diffColor[0] + mirrorColor[0];
+        float resGreen = backColor[1] + diffColor[1] + mirrorColor[1];
+        float resBlue = backColor[2] + diffColor[2] + mirrorColor[2];
+        try {
+            res = new Color(Math.min(1, resRed), Math.min(1, resGreen), Math.min(1, resBlue), 1f);
+
+        } catch (Exception ex) {
+            System.out.println(backColor[0]) ;
+            System.out.println(diffColor[0]) ;
+            System.out.println(mirrorColor[0]) ;
+            System.out.println(backColor[1]);
+            System.out.println(diffColor[1]) ;
+            System.out.println(mirrorColor[1]) ;
+            System.out.println(backColor[2]);
+            System.out.println(diffColor[2]) ;
+            System.out.println(mirrorColor[2]) ;
+        }
+        return res;
     }
 }
