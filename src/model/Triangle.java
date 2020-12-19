@@ -1,10 +1,13 @@
 package model;
 
 import logic.Camera;
+import logic.Texture;
 import logic.Transformation;
 
+import java.awt.*;
 import java.nio.channels.FileLock;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class Triangle {
@@ -82,11 +85,12 @@ public class Triangle {
                 List<Float> alphas = this.getAlphas(x, y);
                 float z = side.getZofCross(alphas, vertices);
                 float w = side.getWCross(y);
-                ends.add(new Point(x, z, side.getNormalOfCross(y, x, z), w));
+                Vector2 uv = side.getUVCross(y, x, z);
+                ends.add(new Point(x, z, side.getNormalOfCross(y, x, z), w, uv));
             }
         }
         if(ends.size() >= 2) {
-            return new Side(ends.get(0).getX(), y, ends.get(0).getZ(), ends.get(1).getX(), y,  ends.get(1).getZ(), ends.get(0).getNormal(), ends.get(1).getNormal(), ends.get(0).getW(), ends.get(1).getW());
+            return new Side(ends.get(0).getX(), y, ends.get(0).getZ(), ends.get(1).getX(), y,  ends.get(1).getZ(), ends.get(0).getNormal(), ends.get(1).getNormal(), ends.get(0).getW(), ends.get(1).getW(), ends.get(0).getUv(), ends.get(1).getUv());
         } else return null;
     }
 
@@ -142,9 +146,9 @@ public class Triangle {
         Vertex vert2 = vertices.get(1);
         Vertex vert3 = vertices.get(2);
 
-        Side side1 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ(), vert2.getNewNormal(), vert1.getNewNormal(), vert2.getW(), vert1.getW());
-        Side side2 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ(), vert2.getNewNormal(), vert3.getNewNormal(), vert2.getW(), vert3.getW());
-        Side side3 = new Side(vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ(), vert3.getNewNormal(), vert1.getNewNormal(), vert3.getW(), vert1.getW());
+        Side side1 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ(), vert2.getNewNormal(), vert1.getNewNormal(), vert2.getW(), vert1.getW(), vert2.getUv(), vert1.getUv());
+        Side side2 = new Side(vert2.getNewPosition().getX(), vert2.getNewPosition().getY(), vert2.getNewPosition().getZ(), vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ(), vert2.getNewNormal(), vert3.getNewNormal(), vert2.getW(), vert3.getW(), vert2.getUv(), vert3.getUv());
+        Side side3 = new Side(vert3.getNewPosition().getX(), vert3.getNewPosition().getY(), vert3.getNewPosition().getZ(), vert1.getNewPosition().getX(), vert1.getNewPosition().getY(), vert1.getNewPosition().getZ(), vert3.getNewNormal(), vert1.getNewNormal(), vert3.getW(), vert1.getW(), vert3.getUv(), vert1.getUv());
 
         sides.clear();
         sides.add(side1);
@@ -251,5 +255,18 @@ public class Triangle {
         res.add(alpha2);
 
         return res;
+    }
+
+    public Color getTextureColor(Texture texture) {
+        Color clr1 = texture.getSpecularColor(vertices.get(0).getUv());
+        Color clr2 = texture.getSpecularColor(vertices.get(1).getUv());
+        Color clr3 = texture.getSpecularColor(vertices.get(2).getUv());
+
+        int resR = Math.round((clr1.getRed() + clr2.getRed() + clr3.getRed()) / 3f);
+        int resG = Math.round((clr1.getGreen() + clr2.getGreen() + clr3.getGreen()) / 3f);
+        int resB = Math.round((clr1.getBlue() + clr2.getBlue() + clr3.getBlue()) / 3f);
+
+        return new Color(resR, resG, resB);
+
     }
 }

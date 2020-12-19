@@ -1,6 +1,8 @@
 import logic.Phong;
+import logic.Texture;
 import logic.Transformation;
 import model.Triangle;
+import model.Vector2;
 import model.Vector3;
 
 import java.awt.*;
@@ -12,7 +14,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(Triangle tr, int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector3 lightSource, Phong phong, Vector3 eyePoint, Transformation transform, float wStart, float wEnd, Transformation proj, Transformation vp, Transformation normMatrix)
+    public static void drawBresenhamLine(Triangle tr, Texture texture, int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector2 uvStart, Vector2 uvEnd)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -21,11 +23,12 @@ public class Bresenhime {
      */
     {
 
-        //Vector3 normalStart = inversedProject.multiplyByVector(startNormal);
-        //Vector3 normalEnd = inversedProject.multiplyByVector(endNormal);
         Vector3 normalStart = startNormal;
         Vector3 normalEnd = endNormal;
-        Color color;
+        Vector2 uv;
+        float uu;
+        float v;
+        Color colorSpec;
         int x, y, dx, dy, incx, incy, incz, pdx, pdy, es, el, err;
         float dz, zStep, z, u;
         Vector3 lightnew;
@@ -89,10 +92,10 @@ public class Bresenhime {
         z = zStart;
         //float cos = cos(new Vector3(xstart, ystart, zStart), inversedProject.multiplyByVector(normalStart), lightSource);
         err = el / 2;
-        //Transformation inversedMatrix = transform.getInversedMAtrix();
-        Vector3 vectorObserver = tr.getInterpolatedObserverVector(x, y);
-        color = phong.getResultPhongColor(vectorObserver, tr.getInterpolatedNormal(xstart,ystart).getNormalized(), eyePoint, proj, vp);
-        d.drawPixel(x, y, zStart, zBuffer, (byte)255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());//ставим первую точку
+        //color = phong.getResultPhongColor(vectorObserver, tr.getInterpolatedNormal(xstart,ystart).getNormalized(), eyePoint, proj, vp);
+        //colorSpec = tr.getTextureColor(texture);
+        colorSpec = texture.getSpecularColor(uvStart);
+        d.drawPixel(x, y, zStart, zBuffer, (byte)255, (byte) colorSpec.getBlue(), (byte) colorSpec.getGreen(), (byte) colorSpec.getRed());//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
 
         for (int t = 0; t < el; t++)//идём по всем точкам, начиная со второй и до последней
@@ -112,15 +115,18 @@ public class Bresenhime {
             } else {
                 u = (y - ystart) / (float)dy;
             }
-            float newZinv = 1f/normalStart.getZ() * (1-u) + 1f/normalEnd.getZ()*u;
-            Vector3 newNormal = tr.getInterpolatedNormal(x, y).getNormalized();
-            float inxZ = 1f/zStart * (1-u) + 1f/zEnd*u;
-            curW = wStart * u + wEnd * (1 - u);
             z = tr.getInterpolatedZ(x, y);
-            //cos = cos(new Vector3(x, y, z), newNormal, lightSource);
-            Vector3 vectorObserver1 = tr.getInterpolatedObserverVector(x, y);
-            color = phong.getResultPhongColor(vectorObserver1, newNormal, eyePoint, proj, vp);
-            d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());
+
+            float upU = (1 - u)*uvStart.getX()/zStart + u * uvEnd.getX()/zEnd;
+            float downU = (1 - u)*1f/zStart + u * 1f/zEnd;
+            float resU = upU / downU;
+            float upV = (1 - u)*uvStart.getY()/zStart + u * uvEnd.getY()/zEnd;
+            float resV = upV / downU;
+            uv = new Vector2(resU, resV);
+            //color = phong.getResultPhongColor(vectorObserver1, newNormal, eyePoint, proj, vp);
+            //colorSpec = tr.getTextureColor(texture);
+            colorSpec = texture.getSpecularColor(uv);
+            d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) colorSpec.getBlue(), (byte) colorSpec.getGreen(), (byte) colorSpec.getRed());
         }
 
     }

@@ -101,4 +101,12 @@ public class Vertex implements Comparable<Vertex>, Cloneable{
         // TODO: Your custom clone logic
         return super.clone();
     }
+
+    public Vector2 getUv() {
+        return uv;
+    }
+
+    public void setUv(Vector2 uv) {
+        this.uv = uv;
+    }
 }

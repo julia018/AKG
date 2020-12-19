@@ -1,7 +1,4 @@
-import logic.Camera;
-import logic.Lambert;
-import logic.Phong;
-import logic.Transformation;
+import logic.*;
 import model.*;
 
 import javax.swing.*;
@@ -67,6 +64,8 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
     public Lambert lambert;
     private Phong phong;
     private Vector3 lightPoint;
+
+    private Texture texture = new Texture();
 
     /**
      * Creates and initializes a new display.
@@ -225,7 +224,7 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
     private void drawRasterizedTriangle(Triangle tr, List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation, Transformation obs) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(tr, Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), light, phong, camera.getEye(), transformation, side.getwStart(), side.getwEnd(), camera.getProjection(), camera.getViewport(), obs);
+            Bresenhime.drawBresenhamLine(tr, texture, Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), side.getUvStart(), side.getUvEnd());
         }
     }
 

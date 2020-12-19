@@ -1,5 +1,6 @@
 import logic.Camera;
 import logic.OBJFileParser;
+import logic.Texture;
 import logic.Transformation;
 import model.Geometry;
 import model.Triangle;

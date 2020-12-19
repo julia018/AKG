@@ -17,6 +17,8 @@ public class Side {
 
     private Vector3 normalStart;
     private Vector3 normalEnd;
+    private Vector2 uvStart;
+    private Vector2 uvEnd;
     private float wStart;
     private float wEnd;
 
@@ -29,7 +31,7 @@ public class Side {
         return normalEnd;
     }
 
-    public Side(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd, Vector3 normStart, Vector3 normEnd, float wStart, float wEnd) {
+    public Side(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd, Vector3 normStart, Vector3 normEnd, float wStart, float wEnd, Vector2 uvStart, Vector2 uvEnd) {
 
         this.yStart = yStart;
         this.xStart = xStart;
@@ -46,6 +48,8 @@ public class Side {
         this.normalEnd = normEnd;
         this.wStart = wStart;
         this.wEnd = wEnd;
+        this.uvStart = uvStart;
+        this.uvEnd = uvEnd;
     }
 
     public boolean isYBelongigng(float y) {
@@ -67,6 +71,28 @@ public class Side {
         float res = (y - yStart) * (wEnd - wStart);
         res /= (yEnd - yStart);
         return res + wStart;
+    }
+
+    public Vector2 getUVCross(float y, float x, float z) {
+        float deltaX = x - xStart;
+        float deltaY = y - yStart;
+        float currVLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        float fullVLength = (float) Math.sqrt(xDelta * xDelta + yDelta * yDelta);
+        float uStart = this.uvStart.getX();
+        float uEnd = this.uvEnd.getX();
+        float vStart = this.uvStart.getY();
+        float vEnd = this.uvEnd.getY();
+        float t = currVLength / fullVLength;
+
+        float upU = (1 - t)*uStart/this.zStart + t * uEnd/zEnd;
+        float downU = (1 - t)*1f/this.zStart + t * 1f/zEnd;
+        float resU = upU / downU;
+
+        float upV = (1 - t)*vStart/this.zStart + t * vEnd/zEnd;
+        float downV = (1 - t)*1f/this.zStart + t * 1f/zEnd;
+        float resV = upV / downV;
+
+        return new Vector2(resU, resV);
     }
 
     // (y - y1)/(y2 - y1) = (x - x1)/(x2 - x1)
@@ -159,5 +185,13 @@ public class Side {
 
     public void setwEnd(float wEnd) {
         this.wEnd = wEnd;
+    }
+
+    public Vector2 getUvStart() {
+        return uvStart;
+    }
+
+    public Vector2 getUvEnd() {
+        return uvEnd;
     }
 }
