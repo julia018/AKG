@@ -224,7 +224,24 @@ public class Display extends Canvas implements MouseWheelListener, MouseListener
 
     private void drawRasterizedTriangle(Triangle tr, List<Side> sides, float[] zBuffer, Vector3 light, Transformation transformation, Transformation obs) {
         for (Side side : sides) {
-            Bresenhime.drawBresenhamLine(tr, texture, Math.round(side.getxStart()), Math.round(side.getyStart()), side.getzStart(), side.getzEnd(), Math.round(side.getxEnd()), Math.round(side.getyEnd()), this, zBuffer, side.getNormalStart(), side.getNormalEnd(), side.getUvStart(), side.getUvEnd());
+            Bresenhime.drawBresenhamLine(
+                    tr,
+                    texture,
+                    Math.round(side.getxStart()),
+                    Math.round(side.getyStart()),
+                    side.getzStart(),
+                    side.getzEnd(),
+                    Math.round(side.getxEnd()),
+                    Math.round(side.getyEnd()),
+                    this,
+                    zBuffer,
+                    side.getNormalStart(),
+                    side.getNormalEnd(),
+                    side.getUvStart(),
+                    side.getUvEnd(),
+                    light,
+                    phong,
+                    camera.getEye());
         }
     }
 

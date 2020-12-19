@@ -21,16 +21,18 @@ public class Texture {
     private int[] specularTextureColors;
     private Integer specImageWidth;
     private Integer specImageHeight;
-    private ByteBuffer normalTextureColors;
+    private int[] normalTextureColors;
     private int normalImageWidth;
     private int normalImageHeight;
-    private ByteBuffer albedoTextureColors;
+    private int[] albedoTextureColors;
     private int albedoImageWidth;
     private int albedoImageHeight;
 
     public Texture() {
         try {
             specularTextureColors = loadTexture(specularFileName);
+            albedoTextureColors = loadTexture(albedoFileName);
+            normalTextureColors = loadTexture(normalFileName);
         } catch (IOException e) {
             System.out.println("Error in texture file loading!");
             e.printStackTrace();
@@ -74,6 +76,55 @@ public class Texture {
         int heightIndex = Math.round((1 - v) * specImageHeight);
         try {
             b = specularTextureColors[(heightIndex) * specImageWidth + (widthIndex)];
+        } catch(Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            System.out.println(uvVector.getX());
+            System.out.println(uvVector.getY());
+        }
+
+        try{
+            return new Color(b);
+        } catch (Exception ex) {
+            System.out.println(ex.getLocalizedMessage());
+            System.out.println(b);
+            return null;
+        }
+
+    }
+
+    public Vector3 getNormals(Vector2 uvVector) {
+        float u = uvVector.getX();
+        float v = uvVector.getY();
+        int b = 0;
+        int widthIndex = Math.round(u * normalImageWidth);
+        int heightIndex = Math.round((1 - v) * normalImageHeight);
+        try {
+            b = normalTextureColors[(heightIndex) * normalImageWidth + (widthIndex)];
+            } catch(Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            System.out.println(uvVector.getX());
+            System.out.println(uvVector.getY());
+        }
+
+        try{
+            Color colorNormal = new Color(b, true);
+            return new Vector3((float) (colorNormal.getRed()/255.0), (float)(colorNormal.getGreen()/255.0), (float)(colorNormal.getBlue()/255.0)).multByValue(2).substractVector(new Vector3(1, 1, 1)).getNormalized();
+        } catch (Exception ex) {
+            System.out.println(ex.getLocalizedMessage());
+            System.out.println(b);
+            return null;
+        }
+
+    }
+
+    public Color getAlbedoColor(Vector2 uvVector) {
+        float u = uvVector.getX();
+        float v = uvVector.getY();
+        int b = 0;
+        int widthIndex = Math.round(u * albedoImageWidth);
+        int heightIndex = Math.round((1 - v) * albedoImageHeight);
+        try {
+            b = albedoTextureColors[(heightIndex) * albedoImageWidth + (widthIndex)];
         } catch(Exception e) {
             System.out.println(e.getLocalizedMessage());
             System.out.println(uvVector.getX());
