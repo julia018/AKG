@@ -72,8 +72,8 @@ public class Texture {
         float u = uvVector.getX();
         float v = uvVector.getY();
         int b = 0;
-        int widthIndex = Math.round(u * specImageWidth);
-        int heightIndex = Math.round((1 - v) * specImageHeight);
+        int widthIndex = (int)(u * (specImageWidth-1) + 0.5f);
+        int heightIndex = (int)((1 - v) * (specImageHeight-1) + 0.5f);
         try {
             b = specularTextureColors[(heightIndex) * specImageWidth + (widthIndex)];
         } catch(Exception e) {
@@ -96,8 +96,8 @@ public class Texture {
         float u = uvVector.getX();
         float v = uvVector.getY();
         int b = 0;
-        int widthIndex = Math.round(u * normalImageWidth);
-        int heightIndex = Math.round((1 - v) * normalImageHeight);
+        int widthIndex = (int)(u * normalImageWidth);
+        int heightIndex = (int)((1 - v) * normalImageHeight);
         try {
             b = normalTextureColors[(heightIndex) * normalImageWidth + (widthIndex)];
             } catch(Exception e) {
@@ -121,8 +121,8 @@ public class Texture {
         float u = uvVector.getX();
         float v = uvVector.getY();
         int b = 0;
-        int widthIndex = Math.round(u * albedoImageWidth);
-        int heightIndex = Math.round((1 - v) * albedoImageHeight);
+        int widthIndex = (int)(u * albedoImageWidth);
+        int heightIndex = (int)((1 - v) * albedoImageHeight);
         try {
             b = albedoTextureColors[(heightIndex) * albedoImageWidth + (widthIndex)];
         } catch(Exception e) {

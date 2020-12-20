@@ -14,7 +14,7 @@ public class Bresenhime {
         //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
     }
 
-    public static void drawBresenhamLine(Triangle tr, Texture texture, int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector2 uvStart, Vector2 uvEnd, Vector3 lightSource, Phong phong, Vector3 eyePoint)
+    public static void drawBresenhamLine(Triangle tr, Texture texture, int xstart, int ystart, float zStart, float zEnd, int xend, int yend, Display d, float[] zBuffer, Vector3 startNormal, Vector3 endNormal, Vector2 uvStart, Vector2 uvEnd, Vector3 lightSource, Phong phong, Vector3 eyePoint, Transformation forNormal)
     /**
      * xstart, ystart - начало;
      * xend, yend - конец;
@@ -95,7 +95,7 @@ public class Bresenhime {
         Vector3 vectorObserver = tr.getInterpolatedObserverVector(x, y);
         colorSpec = texture.getSpecularColor(uvStart);
         colorAlbedo = texture.getAlbedoColor(uvStart);
-        color = phong.getResultPhongColor(vectorObserver, texture.getNormals(uvStart), eyePoint, colorSpec, colorAlbedo);
+        color = phong.getResultPhongColor(vectorObserver, forNormal.multiplyByVector(texture.getNormals(uvStart)), eyePoint, colorSpec, colorAlbedo);
 
         d.drawPixel(x, y, zStart, zBuffer, (byte) 255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());//ставим первую точку
         //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
@@ -129,7 +129,7 @@ public class Bresenhime {
 
             colorSpec = texture.getSpecularColor(uv);
             colorAlbedo = texture.getAlbedoColor(uv);
-            color = phong.getResultPhongColor(vectorObserver1, texture.getNormals(uv), eyePoint, colorSpec, colorAlbedo);
+            color = phong.getResultPhongColor(vectorObserver1, forNormal.multiplyByVector(texture.getNormals(uv)), eyePoint, colorSpec, colorAlbedo);
 
             d.drawPixel(x, y, z, zBuffer, (byte) 255, (byte) color.getBlue(), (byte) color.getGreen(), (byte) color.getRed());
 //            d.drawPixel(x, y, z, zBuffer, (byte)255, (byte) colorSpec.getBlue(), (byte) colorSpec.getGreen(), (byte) colorSpec.getRed());

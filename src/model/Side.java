@@ -82,8 +82,8 @@ public class Side {
         float uEnd = this.uvEnd.getX();
         float vStart = this.uvStart.getY();
         float vEnd = this.uvEnd.getY();
-        float t = currVLength / fullVLength;
-
+        //float t = currVLength / fullVLength;
+        float t = deltaX / this.xDelta;
         float upU = (1 - t)*uStart/this.zStart + t * uEnd/zEnd;
         float downU = (1 - t)*1f/this.zStart + t * 1f/zEnd;
         float resU = upU / downU;
@@ -95,6 +95,8 @@ public class Side {
         return new Vector2(resU, resV);
     }
 
+
+
     // (y - y1)/(y2 - y1) = (x - x1)/(x2 - x1)
     public float getXCross(float y) {
         float u = (y - yStart) / (yEnd - yStart);
@@ -105,8 +107,8 @@ public class Side {
         Vertex v1 = vertices.get(0);
         Vertex v2 = vertices.get(1);
         Vertex v3 = vertices.get(2);
-        float zinv = 1f/v1.getNewPosition().getZ() * alphas.get(0) + 1f/v2.getNewPosition().getZ() * alphas.get(1) + 1f/v3.getNewPosition().getZ() * alphas.get(2);
-        return 1f/zinv;
+        float zres = v1.getNewPosition().getZ() * alphas.get(0) + v2.getNewPosition().getZ() * alphas.get(1) + v3.getNewPosition().getZ() * alphas.get(2);
+        return zres;
     }
 
     public float getxStart() {

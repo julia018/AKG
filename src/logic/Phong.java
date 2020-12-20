@@ -80,9 +80,9 @@ public class Phong {
         float[] backColor = getBackgroundLight(colorAlbedo);
         float[] diffColor = getDiffuseLght(vector, normal, colorAlbedo);
         float[] mirrorColor = getMirrorLight(V, lightPoint, normal, colorSpec);
-        float resRed = backColor[0] + diffColor[0] + mirrorColor[0];
-        float resGreen = backColor[1] + diffColor[1] + mirrorColor[1];
-        float resBlue = backColor[2] + diffColor[2] + mirrorColor[2];
+        float resRed = diffColor[0] + mirrorColor[0];
+        float resGreen = diffColor[1] + mirrorColor[1];
+        float resBlue = diffColor[2] + mirrorColor[2];
         try {
             res = new Color(Math.min(1, resRed), Math.min(1, resGreen), Math.min(1, resBlue), 1f);
 

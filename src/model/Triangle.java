@@ -141,6 +141,22 @@ public class Triangle {
         return new Vector3(resx, resy, 1f/reszinv);
     }
 
+    /*public Vector3 getInterpolatedUV(float x, float y) {
+        List<Float> alphas = this.getAlphas(x, y);
+        float alpha0 = alphas.get(0);
+        float alpha1 = alphas.get(1);
+        float alpha2 = alphas.get(2);
+
+        Vector2 uv1 = vertices.get(0).getUv();
+        Vector2 uv2 = vertices.get(1).getUv();
+        Vector2 uv3 = vertices.get(2).getUv();
+
+        float resx = obsv0.getX() * alpha0 + obsv1.getX() * alpha1 + obsv2.getX() * alpha2;
+        float resy = obsv0.getY() * alpha0 + obsv1.getY() * alpha1 + obsv2.getY() * alpha2;
+        float reszinv = 1f/obsv0.getZ() * alpha0 + 1f/obsv1.getZ() * alpha1 + 1f/obsv2.getZ() * alpha2;
+        return new Vector3(resx, resy, 1f/reszinv);
+    }*/
+
     public void updateSides() {
         Vertex vert1 = vertices.get(0);
         Vertex vert2 = vertices.get(1);
