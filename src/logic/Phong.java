@@ -77,7 +77,7 @@ public class Phong {
     public Color getResultPhongColor(Vector3 vector, Vector3 normal, Vector3 eyePoint, Color colorSpec, Color colorAlbedo) {
         Vector3 V = (new Vector3(0, 0, 0)).substractVector(vector).getNormalized();
         Color res = null;
-        float[] backColor = getBackgroundLight(colorAlbedo);
+        //float[] backColor = getBackgroundLight(colorAlbedo);
         float[] diffColor = getDiffuseLght(vector, normal, colorAlbedo);
         float[] mirrorColor = getMirrorLight(V, lightPoint, normal, colorSpec);
         float resRed = diffColor[0] + mirrorColor[0];
@@ -87,13 +87,10 @@ public class Phong {
             res = new Color(Math.min(1, resRed), Math.min(1, resGreen), Math.min(1, resBlue), 1f);
 
         } catch (Exception ex) {
-            System.out.println(backColor[0]);
             System.out.println(diffColor[0]);
             System.out.println(mirrorColor[0]);
-            System.out.println(backColor[1]);
             System.out.println(diffColor[1]);
             System.out.println(mirrorColor[1]);
-            System.out.println(backColor[2]);
             System.out.println(diffColor[2]);
             System.out.println(mirrorColor[2]);
         }

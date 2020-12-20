@@ -123,8 +123,9 @@ public class Bresenhime {
             float downU = (1 - u) * 1f / zStart + u * 1f / zEnd;
             float resU = upU / downU;
             float upV = (1 - u) * uvStart.getY() / zStart + u * uvEnd.getY() / zEnd;
-            float resV = upV / downU;
-            uv = new Vector2(resU, resV);
+            //float resV = upV / downU;
+            uv = tr.getInterpolatedUV(x, y);
+            //uv = new Vector2(resU, resV);
             Vector3 vectorObserver1 = tr.getInterpolatedObserverVector(x, y);
 
             colorSpec = texture.getSpecularColor(uv);

@@ -76,14 +76,14 @@ public class Side {
     public Vector2 getUVCross(float y, float x, float z) {
         float deltaX = x - xStart;
         float deltaY = y - yStart;
-        float currVLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        float fullVLength = (float) Math.sqrt(xDelta * xDelta + yDelta * yDelta);
+        float currVLength = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY); // get length og vector
+        float fullVLength = (float) Math.sqrt(xDelta * xDelta + yDelta * yDelta); // get full length of vector
         float uStart = this.uvStart.getX();
         float uEnd = this.uvEnd.getX();
         float vStart = this.uvStart.getY();
         float vEnd = this.uvEnd.getY();
-        //float t = currVLength / fullVLength;
-        float t = deltaX / this.xDelta;
+        float t = currVLength / fullVLength;
+        //float t = deltaX / this.xDelta;
         float upU = (1 - t)*uStart/this.zStart + t * uEnd/zEnd;
         float downU = (1 - t)*1f/this.zStart + t * 1f/zEnd;
         float resU = upU / downU;
